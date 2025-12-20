@@ -13,19 +13,8 @@ class Neurone :
 
         assert len(inputs) == len(self.__coefs)
         
-        for index in len(range(inputs)) :
+        for index in range(len(inputs)) :
 
             inputs[index] *= self.__coefs[index]
 
         return self.__func(inputs)
-
-def produit(termes) :
-    a,b = termes
-    return a * b
-
-inputs = [1, 2]
-coefficients = [1, 1]
-
-produitNeurone = Neurone(coefficients, produit)
-
-print(produitNeurone.sortie(inputs))
