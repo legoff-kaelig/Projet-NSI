@@ -1,3 +1,4 @@
+from random import random
 import math
 
 def sigmoid(x):
@@ -23,9 +24,13 @@ class Neurone :
         self.__func = func
         self.__biais = biais
 
-    def change_coefs(self, new_coefs) :
+    def changer_coefs(self, new_coefs) :
 
         self.__coefs = new_coefs
+
+    def cahnger_coefs_randomly(self) :
+         
+        self.__coefs = random()
 
     def sortie(self, inputs : list) :
 
