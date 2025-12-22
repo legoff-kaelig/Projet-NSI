@@ -5,7 +5,7 @@ def sigmoid(x):
     """
     Entrée : <x> un réel
 
-    Sortie : un flottant strictement copris entre 0 et 1
+    Sortie : un flottant compris entre 0 et 1
     """
 
     sig = 1 / (1 + math.exp(-x))
@@ -92,3 +92,34 @@ class Neurone :
         inputs.append(self.__biais)
 
         return sigmoid(self.__func(inputs))
+
+
+
+class ReseauDeNeurones :
+
+    def __init__(self, matriceDuReseau) :
+
+        self.__inputs = matriceDuReseau[0]
+        self.__couches = []
+
+        for couche in range(1,len(matriceDuReseau)) :
+
+            self.__couches.append(couche)
+
+    def sortie(self) :
+
+        listeDesInputs = []
+        listeDesInputs.append(self.__inputs)
+
+        for couche in range(len(self.__couches)) :
+
+            listeDesResultats = []
+
+            for neurone in self.__couches[couche] :
+
+                listeDesResultats.append(neurone.sortie(listeDesInputs[0]))
+
+            listeDesInputs.pop()
+            listeDesInputs.append(listeDesResultats)
+            
+        return listeDesResultats
