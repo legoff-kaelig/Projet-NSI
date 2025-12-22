@@ -17,21 +17,24 @@ def func_de_base_somme(termes) :
 
 class Neurone :
 
-    def __init__(self, coefficients, func = func_de_base_somme) :
+    def __init__(self, coefficients, func = func_de_base_somme, biais = 0) :
 
         self.__coefs = coefficients
         self.__func = func
+        self.__biais = biais
 
     def change_coefs(self, new_coefs) :
 
         self.__coefs = new_coefs
 
-    def sortie(self, inputs) :
+    def sortie(self, inputs : list) :
 
-        assert len(inputs) == len(self.__coefs)
+        assert len(inputs) <= len(self.__coefs)
         
-        for index in len(range(inputs)) :
+        for index in range(len(inputs)) :
 
             inputs[index] *= self.__coefs[index]
+
+        inputs.append(self.__biais)
 
         return sigmoid(self.__func(inputs))
