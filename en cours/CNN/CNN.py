@@ -1,5 +1,19 @@
 from neurones import *
 from random import *
+from PIL.Image import *
+
+image = open("C:/Users/Riwan/Documents/GitHub/Projet-NSI/en cours/CNN/nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/9.png")
+
+largeurImage, hauteurImage = image.size
+imagePxParPxMaisEnGris = []
+
+for ligne in range(largeurImage) :
+
+    for colonne in range(hauteurImage) :
+
+        r,g,b,a = image.getpixel((ligne, colonne))
+        niveauDeGris = (r + g + b) // 3
+        imagePxParPxMaisEnGris.append(niveauDeGris)
 
 coefficients = [[],[]]
 
@@ -36,3 +50,4 @@ neuroneCouche2Numero10 = Neurone(coefficients[1][9])
 neuroneCouche2Numero11 = Neurone(coefficients[1][10])
 neuroneCouche2Numero12 = Neurone(coefficients[1][11])
 neuroneCouche2Numero13 = Neurone(coefficients[1][12])
+
