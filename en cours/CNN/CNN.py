@@ -1,6 +1,9 @@
 from neurones import *
 from random import *
 from PIL.Image import *
+ ############################################################
+  ############### Initialisation des variables ###############
+   ############################################################
 
 image = open("C:/Users/Riwan/Documents/GitHub/Projet-NSI/en cours/CNN/nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/9.png")
 
@@ -8,6 +11,17 @@ largeurImage, hauteurImage = image.size
 imagePxParPxMaisEnGris = []
 structureNeuronale = [[], [], [], []]
 coefficients = [[], [], []]
+
+   ############################################################
+  ############################################################
+ ############################################################
+
+
+ #######################################################################################################
+  ############## Remplissage du réseau neuronal par les neurones ou les pixels de l'image ###############
+   #######################################################################################################
+
+################ Mise en niveau de gris entre 0 et 1 de l'image dans la structure neuronale ################
 
 for ligne in range(largeurImage) :
 
@@ -17,9 +31,14 @@ for ligne in range(largeurImage) :
         niveauDeGris = (r + g + b) // 3
         imagePxParPxMaisEnGris.append(niveauDeGris)
 
+
 for px in imagePxParPxMaisEnGris :
 
     structureNeuronale[0].append(px/255)
+
+#############################################################################################################
+
+################ Ajout de la première couche de neurones ################
 
 for numero in range(13) :
 
@@ -57,6 +76,10 @@ structureNeuronale[1] = [neuroneCouche1Numero1,
                          neuroneCouche1Numero12, 
                          neuroneCouche1Numero13]
 
+#########################################################################
+
+################ Ajout de la deuxième couche de neurones ################
+
 for numero in range(13) :
 
     coefficients[1].append([])
@@ -93,6 +116,10 @@ structureNeuronale[2] = [neuroneCouche2Numero1,
                          neuroneCouche2Numero12, 
                          neuroneCouche2Numero13]
 
+#########################################################################
+
+################ Ajout de la dernière couche de neurones ################
+
 for numero in range(10) :
 
     coefficients[2].append([])
@@ -122,3 +149,9 @@ structureNeuronale[3] = [neuroneCouche3Numero1,
                          neuroneCouche3Numero8, 
                          neuroneCouche3Numero9, 
                          neuroneCouche3Numero10]
+
+#########################################################################
+
+   #######################################################################################################
+  #######################################################################################################
+ #######################################################################################################
