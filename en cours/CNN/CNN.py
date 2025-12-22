@@ -5,7 +5,7 @@ from PIL.Image import *
   ############### Initialisation des variables ###############
    ############################################################
 
-image = open("C:/Users/Riwan/Documents/GitHub/Projet-NSI/en cours/CNN/nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/9.png")
+image = open("C:/Users/Riwan/Documents/GitHub/Projet-NSI/en cours/CNN/nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/7.png")
 
 largeurImage, hauteurImage = image.size
 imagePxParPxMaisEnGris = []
@@ -34,7 +34,7 @@ for ligne in range(largeurImage) :
 
 for px in imagePxParPxMaisEnGris :
 
-    structureNeuronale[0].append(px/255)
+    structureNeuronale[0].append(sigmoid(px))
 
 #############################################################################################################
 
@@ -152,6 +152,10 @@ structureNeuronale[3] = [neuroneCouche3Numero1,
 
 #########################################################################
 
+reseauDeNeurones = ReseauDeNeurones(structureNeuronale)
+
    #######################################################################################################
   #######################################################################################################
  #######################################################################################################
+
+print(reseauDeNeurones.sortie())

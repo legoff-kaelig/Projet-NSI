@@ -48,6 +48,14 @@ class Neurone :
 
 
 
+    def coefs(self) :
+
+        return self.__coefs
+    
+    def biais(self) :
+
+        return self.__biais
+
     def changer_coefs(self, new_coefs) :
         """
         Entrée : <new_coefs>, la liste des nouveaux coefficients à ajouter
@@ -83,9 +91,9 @@ class Neurone :
         Sortie : La sortie de la fonction du neurones où les inputs ont été multipliés par les coefs et où le biais à été rajouté
         """
 
-        assert len(inputs) <= len(self.__coefs)
+        assert len(inputs) >= len(self.__coefs)
         
-        for index in range(len(inputs)) :
+        for index in range(len(self.__coefs)) :
 
             inputs[index] *= self.__coefs[index]
 
@@ -104,7 +112,32 @@ class ReseauDeNeurones :
 
         for couche in range(1,len(matriceDuReseau)) :
 
-            self.__couches.append(couche)
+            self.__couches.append(matriceDuReseau[couche])
+        
+
+
+    def couches(self) :
+
+        return self.__couches
+    
+
+
+    def multiplier_coefs(self, new_coefs) :
+
+        assert len(new_coefs) == len(self.__couches)
+
+        for indiceCouche in range(len(self.__couches)) :
+
+            for neurone in self.__couches[indiceCouche] :
+
+                new_coefs_neurone = []
+
+                for indiceCoef in range(len(neurone.coefs())) :
+
+                    new_coefs_neurone.append(neurone.coefs[indiceCoef] * new_coefs[indiceCouche][indiceCoef])
+
+                neurone.changer_coefs(new_coefs_neurone)
+    
 
     def sortie(self) :
 
@@ -112,7 +145,7 @@ class ReseauDeNeurones :
         listeDesInputs.append(self.__inputs)
 
         for couche in range(len(self.__couches)) :
-
+            
             listeDesResultats = []
 
             for neurone in self.__couches[couche] :
