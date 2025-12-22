@@ -11,6 +11,8 @@ def sigmoid(x):
     sig = 1 / (1 + math.exp(-x))
     return sig
 
+
+
 def func_de_base_somme(termes) :
     """
     Entrée : <termes> une liste de réels
@@ -25,15 +27,17 @@ def func_de_base_somme(termes) :
 
     return resultat
 
+
+
 class Neurone :
 
     def __init__(self, coefficients, func = func_de_base_somme, biais = 0) :
         """
         Entrée :
 
-            :coefficients: La liste des coefficients du neurone
-            :func: La fonction que va effectuer le neurone, de base une somme
-            :biais: Le biais du neurone
+            <coefficients>, la liste des coefficients du neurone
+            <func>, la fonction que va effectuer le neurone, de base une somme
+            <biais>, le biais du neurone
 
         Action : Création des attributs éponymes aux entrées pour notre neurone
         """
@@ -42,15 +46,42 @@ class Neurone :
         self.__func = func
         self.__biais = biais
 
-    def changer_coefs(self, new_coefs) :
 
+
+    def changer_coefs(self, new_coefs) :
+        """
+        Entrée : <new_coefs>, la liste des nouveaux coefficients à ajouter
+
+        Action : Modification de la liste attribut du neurones <__coefs>
+        """
+        
         self.__coefs = new_coefs
 
-    def cahnger_coefs_randomly(self) :
-         
-        self.__coefs = random()
+
+
+    def changer_coefs_randomly(self, nb_coefs) :
+        """
+        Entrée : <nb_coefs>, un entier naturel correspondant au nombre de coefs voulus
+
+        Action : Change l'attribut du neurone <__coefs> en une liste de longueur <nb_coefs> de nombres aléatoires compris entre 0 et 1 
+        """
+
+        new_coefs = []
+
+        for _ in range(nb_coefs) :
+
+            new_coefs.append(random())
+
+        self.changer_coefs(new_coefs)
+
+
 
     def sortie(self, inputs : list) :
+        """
+        Entrée : <inputs>, la liste des nombres à faire passer dans la fonction du neurone
+
+        Sortie : La sortie de la fonction du neurones où les inputs ont été multipliés par les coefs et où le biais à été rajouté
+        """
 
         assert len(inputs) <= len(self.__coefs)
         
