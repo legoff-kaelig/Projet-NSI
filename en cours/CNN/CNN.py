@@ -6,6 +6,8 @@ image = open("C:/Users/Riwan/Documents/GitHub/Projet-NSI/en cours/CNN/nombres é
 
 largeurImage, hauteurImage = image.size
 imagePxParPxMaisEnGris = []
+structureNeuronale = [[], [], [], []]
+coefficients = [[], [], []]
 
 for ligne in range(largeurImage) :
 
@@ -15,13 +17,17 @@ for ligne in range(largeurImage) :
         niveauDeGris = (r + g + b) // 3
         imagePxParPxMaisEnGris.append(niveauDeGris)
 
-coefficients = [[],[]]
+for px in imagePxParPxMaisEnGris :
 
-for couche in range(len(coefficients)) :
+    structureNeuronale[0].append(px/255)
 
-    for numero in range(13) :
+for numero in range(13) :
 
-        coefficients[couche].append(random())  
+    coefficients[0].append([])
+    
+    for _ in range(len(structureNeuronale[0])) :
+
+        coefficients[0][numero].append(random())  
 
 neuroneCouche1Numero1 = Neurone(coefficients[0][0])
 neuroneCouche1Numero2 = Neurone(coefficients[0][1])
@@ -37,6 +43,28 @@ neuroneCouche1Numero11 = Neurone(coefficients[0][10])
 neuroneCouche1Numero12 = Neurone(coefficients[0][11])
 neuroneCouche1Numero13 = Neurone(coefficients[0][12])
 
+structureNeuronale[1] = [neuroneCouche1Numero1, 
+                         neuroneCouche1Numero2, 
+                         neuroneCouche1Numero3, 
+                         neuroneCouche1Numero4, 
+                         neuroneCouche1Numero5, 
+                         neuroneCouche1Numero6, 
+                         neuroneCouche1Numero7, 
+                         neuroneCouche1Numero8, 
+                         neuroneCouche1Numero9, 
+                         neuroneCouche1Numero10, 
+                         neuroneCouche1Numero11, 
+                         neuroneCouche1Numero12, 
+                         neuroneCouche1Numero13]
+
+for numero in range(13) :
+
+    coefficients[1].append([])
+    
+    for _ in range(len(structureNeuronale[1])) :
+
+        coefficients[1][numero].append(random())
+
 neuroneCouche2Numero1 = Neurone(coefficients[1][0])
 neuroneCouche2Numero2 = Neurone(coefficients[1][1])
 neuroneCouche2Numero3 = Neurone(coefficients[1][2])
@@ -51,3 +79,46 @@ neuroneCouche2Numero11 = Neurone(coefficients[1][10])
 neuroneCouche2Numero12 = Neurone(coefficients[1][11])
 neuroneCouche2Numero13 = Neurone(coefficients[1][12])
 
+structureNeuronale[2] = [neuroneCouche2Numero1, 
+                         neuroneCouche2Numero2, 
+                         neuroneCouche2Numero3, 
+                         neuroneCouche2Numero4, 
+                         neuroneCouche2Numero5, 
+                         neuroneCouche2Numero6, 
+                         neuroneCouche2Numero7, 
+                         neuroneCouche2Numero8, 
+                         neuroneCouche2Numero9, 
+                         neuroneCouche2Numero10, 
+                         neuroneCouche2Numero11, 
+                         neuroneCouche2Numero12, 
+                         neuroneCouche2Numero13]
+
+for numero in range(10) :
+
+    coefficients[2].append([])
+    
+    for _ in range(len(structureNeuronale[2])) :
+
+        coefficients[2][numero].append(random())
+
+neuroneCouche3Numero1 = Neurone(coefficients[2][0])
+neuroneCouche3Numero2 = Neurone(coefficients[2][1])
+neuroneCouche3Numero3 = Neurone(coefficients[2][2])
+neuroneCouche3Numero4 = Neurone(coefficients[2][3])
+neuroneCouche3Numero5 = Neurone(coefficients[2][4])
+neuroneCouche3Numero6 = Neurone(coefficients[2][5])
+neuroneCouche3Numero7 = Neurone(coefficients[2][6])
+neuroneCouche3Numero8 = Neurone(coefficients[2][7])
+neuroneCouche3Numero9 = Neurone(coefficients[2][8])
+neuroneCouche3Numero10 = Neurone(coefficients[2][9])
+
+structureNeuronale[3] = [neuroneCouche3Numero1, 
+                         neuroneCouche3Numero2, 
+                         neuroneCouche3Numero3, 
+                         neuroneCouche3Numero4, 
+                         neuroneCouche3Numero5, 
+                         neuroneCouche3Numero6, 
+                         neuroneCouche3Numero7, 
+                         neuroneCouche3Numero8, 
+                         neuroneCouche3Numero9, 
+                         neuroneCouche3Numero10]
