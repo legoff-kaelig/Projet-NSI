@@ -134,6 +134,17 @@ class ReseauDeNeurones :
 
         return self.__couches
     
+    
+
+    def changer_inputs(self, new_inputs) :
+        """
+        Entrée : <new_inputs>, la liste des nouveaux inputs à mettre
+
+        Action : Changement des valeurs de l'attribut <__inputs> pour ceux de <new_inputs>
+        """
+
+        self.__inputs = new_inputs
+    
 
 
     def multiplier_coefs(self, new_coefs) :
