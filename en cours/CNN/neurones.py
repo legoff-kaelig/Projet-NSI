@@ -112,6 +112,11 @@ class Neurone :
 class ReseauDeNeurones :
 
     def __init__(self, matriceDuReseau) :
+        """
+        Entrée : <matriceDuReseau>, une matrice contenant au moins une première couches de nombres entre 0 et 1 et et une deuxième couche de neurones avec chacuns le même nombre de coefficients que de nombres ou de neurones dans la couche précédente, cette matrice est la base du reseau neuronal 
+
+        Action : Création de deux attributs, <__inputs> la première couche du réseau contenant de simple nombres entre 0 et 1 et <__couches> une matrice contenant les couches de neurones suivantes
+        """
 
         self.__inputs = matriceDuReseau[0]
         self.__couches = []
@@ -123,12 +128,20 @@ class ReseauDeNeurones :
 
 
     def couches(self) :
+        """
+        Sortie : <self.__couche>, les couches de notre réseau de neurones
+        """
 
         return self.__couches
     
 
 
     def multiplier_coefs(self, new_coefs) :
+        """
+        Entrée : <new_coefs>, les coefficients à appliquer sur les anciens coefficients
+
+        Action : Multiplication de tous les coefficients des neurones du réseau par leur correspondant dans <new_coefs> 
+        """
 
         assert len(new_coefs) == len(self.__couches)
 
@@ -147,6 +160,12 @@ class ReseauDeNeurones :
     
 
     def sortie(self) :
+
+        """
+        Entrée : <inputs>, la liste des liste de nombres à faire passer dans les fonctions des neurones
+
+        Sortie : La sortie des neurones de la dernière couche
+        """
 
         listeDesInputs = []
         listeDesInputs.append(self.__inputs)
