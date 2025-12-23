@@ -46,7 +46,7 @@ for numero in range(13) :
     
     for _ in range(len(structureNeuronale[0])) :
 
-        coefficients[0][numero].append(random())  
+        coefficients[0][numero].append(random()) 
 
 neuroneCouche1Numero1 = Neurone(coefficients[0][0])
 neuroneCouche1Numero2 = Neurone(coefficients[0][1])
