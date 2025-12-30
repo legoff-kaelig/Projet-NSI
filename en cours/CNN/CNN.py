@@ -1,14 +1,12 @@
 from neurones import *
 from random import *
 from PIL.Image import *
+import sqlite3
+
  ############################################################
   ############### Initialisation des variables ###############
    ############################################################
 
-image = open("C:/Users/Riwan/Documents/GitHub/Projet-NSI/en cours/CNN/nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/7.png")
-
-largeurImage, hauteurImage = image.size
-imagePxParPxMaisEnGris = []
 structureNeuronale = [[], [], [], []]
 coefficients = [[], [], []]
 
@@ -21,22 +19,9 @@ coefficients = [[], [], []]
   ############## Remplissage du réseau neuronal par les neurones ou les pixels de l'image ###############
    #######################################################################################################
 
-################ Mise en niveau de gris entre 0 et 1 de l'image dans la structure neuronale ################
-
-for ligne in range(largeurImage) :
-
-    for colonne in range(hauteurImage) :
-
-        r,g,b,a = image.getpixel((ligne, colonne))
-        niveauDeGris = (r + g + b) // 3
-        imagePxParPxMaisEnGris.append(niveauDeGris)
-
-
 for px in imagePxParPxMaisEnGris :
 
     structureNeuronale[0].append(sigmoid(px))
-
-#############################################################################################################
 
 ################ Ajout de la première couche de neurones ################
 
