@@ -1,40 +1,45 @@
-import sqlite3
+# import sqlite3
 
-con = sqlite3.connect("Test.sqli")
-cur=con.cursor()
+# con = sqlite3.connect("Test.sqli")
+# cur=con.cursor()
 
-a = 5
+# a = 5
 
-for i in range(a) :
+# for i in range(a) :
 
-    request = f"""
-    CREATE TABLE IF NOT EXISTS TEST{i} (
-    column_1 INTEGER
-    );
-    """
+#     request = f"""
+#     CREATE TABLE IF NOT EXISTS TEST{i} (
+#     column_1 INTEGER
+#     );
+#     """
 
-    cur.execute(request)
+#     cur.execute(request)
 
-request = """
-INSERT INTO TEST1 
-(column_1)
-VALUES (2)
-"""
+# request = """
+# INSERT INTO TEST1 
+# (column_1)
+# VALUES (2)
+# """
 
-cur.execute(request)
-cur.execute(request)
+# cur.execute(request)
+# cur.execute(request)
 
-for i in range(a) :
+# for i in range(a) :
 
-    request = f"""
-    SELECT *
-    FROM TEST{i}
-    """
+#     request = f"""
+#     SELECT *
+#     FROM TEST{i}
+#     """
 
-    cur.execute(request)
+#     cur.execute(request)
 
-    res = cur.fetchall()
-    print(res)
+#     res = cur.fetchall()
+#     print(res)
 
-con.commit()
-con.close()
+# con.commit()
+# con.close()
+
+from random import *
+
+
+print(uniform(-5, 5))

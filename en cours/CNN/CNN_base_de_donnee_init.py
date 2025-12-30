@@ -11,7 +11,7 @@ image = open("C:/Users/Riwan/Documents/GitHub/Projet-NSI/en cours/CNN/nombres é
 largeurImage, hauteurImage = image.size
 imagePxParPxMaisEnGris = []
 
-con = sqlite3.connect("CNN.sqli")
+con = sqlite3.connect("CNN_base_de_donee.sqli")
 cur=con.cursor()
 
 request = """
@@ -43,7 +43,8 @@ for couche in range(nbCouches) :
 
     request = f"""
     CREATE TABLE IF NOT EXISTS COUCHES{couche} (
-    neurones INTEGER PRIMARY KEY
+    neurones INTEGER PRIMARY KEY,
+    biais
     );
     """
 
@@ -51,10 +52,12 @@ for couche in range(nbCouches) :
 
     for neurone in range(len(structureNeuronale[couche])) :
 
+        biaisRandom = uniform(-15, 15)
+
         request = f"""
         INSERT INTO COUCHES{couche}
-        (neurones)
-        VALUES ({neurone})
+        (neurones, biais)
+        VALUES ({neurone}, {biaisRandom})
         """
 
         cur.execute(request)
@@ -68,10 +71,31 @@ for couche in range(nbCouches) :
 
         cur.execute(request)
 
+        if couche == 0 :
+
+            nbCoefficients = largeurImage * hauteurImage
+        
+        else :
+            
+            nbCoefficients = len(structureNeuronale[couche - 1])
+
+        for coefficient in range(nbCoefficients) :
+
+            coefRandom = uniform(-5, 5)
+
+            request = f"""
+            INSERT INTO COUCHE{couche}NEURONE{neurone}
+            (coefficient)
+            VALUES ({coefRandom})
+            """
+
+            cur.execute(request)
+
+
 con.commit()
 con.close()
 
-################ Mise en niveau de gris entre 0 et 1 de l'image ################
+# ################ Mise en niveau de gris entre 0 et 1 de l'image ################
 
 # for ligne in range(largeurImage) :
 
@@ -85,4 +109,4 @@ con.close()
 
 #     structureNeuronale[0].append(sigmoid(px))
 
-#############################################################################################################
+# ################################################################################
