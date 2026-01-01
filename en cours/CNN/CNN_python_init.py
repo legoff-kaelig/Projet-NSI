@@ -7,31 +7,60 @@ import sqlite3
   ############### Initialisation des variables ###############
    ############################################################
 
+con = sqlite3.connect("CNN_base_de_donee.sqli")
+cur=con.cursor()
+
 structureNeuronale = [[], [], [], []]
 coefficients = [[], [], []]
+
+image = open("C:/Users/Riwan/Documents/GitHub/Projet-NSI/en cours/CNN/nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/7.png")
+largeurImage, hauteurImage = image.size
+imagePxParPxMaisEnGris = []
 
    ############################################################
   ############################################################
  ############################################################
 
 
- #######################################################################################################
-  ############## Remplissage du réseau neuronal par les neurones ou les pixels de l'image ###############
-   #######################################################################################################
+ #############################################################################################################################################################################
+  ############## Remplissage du réseau neuronal par les neurones (avec les coefficients de la base de donnée "CNN_base_de_donnee.sqli" ou les pixels de l'image ###############
+   #############################################################################################################################################################################
+
+
+################ Mise en niveau de gris entre 0 et 1 et ajout au réseau de neurone de l'image ################
+
+for ligne in range(largeurImage) :
+
+    for colonne in range(hauteurImage) :
+
+        r,g,b,a = image.getpixel((ligne, colonne))
+        niveauDeGris = (r + g + b) // 3
+        imagePxParPxMaisEnGris.append(niveauDeGris)
 
 for px in imagePxParPxMaisEnGris :
 
     structureNeuronale[0].append(sigmoid(px))
 
+##############################################################################################################
+
 ################ Ajout de la première couche de neurones ################
 
-for numero in range(13) :
+for neurone in range(13) :
 
     coefficients[0].append([])
     
-    for _ in range(len(structureNeuronale[0])) :
+    request = f"""
+    SELECT *
+    FROM COUCHE0NEURONE{neurone}
+    """
 
-        coefficients[0][numero].append(random()) 
+    cur.execute(request)
+
+    res = cur.fetchall()
+
+    for indiceCoef in range(len(structureNeuronale[0])) :
+
+        coefficients[0][neurone].append(res[indiceCoef][1])
 
 neuroneCouche1Numero1 = Neurone(coefficients[0][0])
 neuroneCouche1Numero2 = Neurone(coefficients[0][1])
@@ -65,13 +94,22 @@ structureNeuronale[1] = [neuroneCouche1Numero1,
 
 ################ Ajout de la deuxième couche de neurones ################
 
-for numero in range(13) :
+for neurone in range(13) :
 
     coefficients[1].append([])
     
-    for _ in range(len(structureNeuronale[1])) :
+    request = f"""
+    SELECT *
+    FROM COUCHE1NEURONE{neurone}
+    """
 
-        coefficients[1][numero].append(random())
+    cur.execute(request)
+
+    res = cur.fetchall()
+
+    for indiceCoef in range(len(structureNeuronale[1])) :
+
+        coefficients[1][neurone].append(res[indiceCoef][1])
 
 neuroneCouche2Numero1 = Neurone(coefficients[1][0])
 neuroneCouche2Numero2 = Neurone(coefficients[1][1])
@@ -103,15 +141,24 @@ structureNeuronale[2] = [neuroneCouche2Numero1,
 
 #########################################################################
 
-################ Ajout de la dernière couche de neurones ################
+################ Ajout de la dernière couche de neurone ################
 
-for numero in range(10) :
+for neurone in range(10) :
 
     coefficients[2].append([])
     
-    for _ in range(len(structureNeuronale[2])) :
+    request = f"""
+    SELECT *
+    FROM COUCHE2NEURONE{neurone}
+    """
 
-        coefficients[2][numero].append(random())
+    cur.execute(request)
+
+    res = cur.fetchall()
+
+    for indiceCoef in range(len(structureNeuronale[2])) :
+
+        coefficients[2][neurone].append(res[indiceCoef][1])
 
 neuroneCouche3Numero1 = Neurone(coefficients[2][0])
 neuroneCouche3Numero2 = Neurone(coefficients[2][1])
@@ -139,6 +186,8 @@ structureNeuronale[3] = [neuroneCouche3Numero1,
 
 reseauDeNeurones = ReseauDeNeurones(structureNeuronale)
 
-   #######################################################################################################
-  #######################################################################################################
- #######################################################################################################
+   #############################################################################################################################################################################
+  #############################################################################################################################################################################
+ #############################################################################################################################################################################
+
+print(reseauDeNeurones.sortie())

@@ -7,9 +7,8 @@ structureNeuronale = [[[],[],[],[],[],[],[],[],[],[],[],[],[]],
                        [[],[],[],[],[],[],[],[],[],[]]]
 nbCouches = len(structureNeuronale)
 
-image = open("C:/Users/Riwan/Documents/GitHub/Projet-NSI/en cours/CNN/nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/7.png")
-largeurImage, hauteurImage = image.size
-imagePxParPxMaisEnGris = []
+largeurImage = 40
+hauteurImage = 40
 
 con = sqlite3.connect("CNN_base_de_donee.sqli")
 cur=con.cursor()
@@ -95,18 +94,3 @@ for couche in range(nbCouches) :
 con.commit()
 con.close()
 
-# ################ Mise en niveau de gris entre 0 et 1 de l'image ################
-
-# for ligne in range(largeurImage) :
-
-#     for colonne in range(hauteurImage) :
-
-#         r,g,b,a = image.getpixel((ligne, colonne))
-#         niveauDeGris = (r + g + b) // 3
-#         imagePxParPxMaisEnGris.append(niveauDeGris)
-
-# for px in imagePxParPxMaisEnGris :
-
-#     structureNeuronale[0].append(sigmoid(px))
-
-# ################################################################################
