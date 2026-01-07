@@ -3,18 +3,24 @@ from random import *
 from PIL.Image import *
 import sqlite3
 
-def init_CNN(imagePath, baseDeDoneePath) :
+def init_CNN(imagePath, baseDeDoneePath = None, coefficients = None) :
+
+    assert baseDeDoneePath != coefficients
 
     ############################################################
      ############### Initialisation des variables ###############
       ############################################################
 
-    con = sqlite3.connect(baseDeDoneePath)
-    cur=con.cursor()
+    baseDeDonneeEnArgument = coefficients == None
+
+    if baseDeDonneeEnArgument :
+
+        con = sqlite3.connect(baseDeDoneePath)
+        cur=con.cursor()
+        coefficients = [[], [], []]
 
     structureNeuronale = [[], [], [], []]
-    coefficients = [[], [], []]
-
+    
     image = open(imagePath)
     largeurImage, hauteurImage = image.size
     imagePxParPxMaisEnGris = []
@@ -47,22 +53,24 @@ def init_CNN(imagePath, baseDeDoneePath) :
 
     ################ Ajout de la première couche de neurones ################
 
-    for neurone in range(13) :
+    if baseDeDonneeEnArgument :
 
-        coefficients[0].append([])
-        
-        request = f"""
-        SELECT *
-        FROM COUCHE0NEURONE{neurone}
-        """
+        for neurone in range(13) :
 
-        cur.execute(request)
+            coefficients[0].append([])
+            
+            request = f"""
+            SELECT *
+            FROM COUCHE0NEURONE{neurone}
+            """
 
-        res = cur.fetchall()
+            cur.execute(request)
 
-        for indiceCoef in range(len(structureNeuronale[0])) :
+            res = cur.fetchall()
 
-            coefficients[0][neurone].append(res[indiceCoef][1])
+            for indiceCoef in range(len(structureNeuronale[0])) :
+
+                coefficients[0][neurone].append(res[indiceCoef][1])
 
     neuroneCouche1Numero1 = Neurone(coefficients[0][0])
     neuroneCouche1Numero2 = Neurone(coefficients[0][1])
@@ -96,22 +104,24 @@ def init_CNN(imagePath, baseDeDoneePath) :
 
     ################ Ajout de la deuxième couche de neurones ################
 
-    for neurone in range(13) :
+    if baseDeDonneeEnArgument :
 
-        coefficients[1].append([])
-        
-        request = f"""
-        SELECT *
-        FROM COUCHE1NEURONE{neurone}
-        """
+        for neurone in range(13) :
 
-        cur.execute(request)
+            coefficients[1].append([])
+            
+            request = f"""
+            SELECT *
+            FROM COUCHE1NEURONE{neurone}
+            """
 
-        res = cur.fetchall()
+            cur.execute(request)
 
-        for indiceCoef in range(len(structureNeuronale[1])) :
+            res = cur.fetchall()
 
-            coefficients[1][neurone].append(res[indiceCoef][1])
+            for indiceCoef in range(len(structureNeuronale[1])) :
+
+                coefficients[1][neurone].append(res[indiceCoef][1])
 
     neuroneCouche2Numero1 = Neurone(coefficients[1][0])
     neuroneCouche2Numero2 = Neurone(coefficients[1][1])
@@ -145,22 +155,24 @@ def init_CNN(imagePath, baseDeDoneePath) :
 
     ################ Ajout de la dernière couche de neurone ################
 
-    for neurone in range(10) :
+    if baseDeDonneeEnArgument :
 
-        coefficients[2].append([])
-        
-        request = f"""
-        SELECT *
-        FROM COUCHE2NEURONE{neurone}
-        """
+        for neurone in range(10) :
 
-        cur.execute(request)
+            coefficients[2].append([])
+            
+            request = f"""
+            SELECT *
+            FROM COUCHE2NEURONE{neurone}
+            """
 
-        res = cur.fetchall()
+            cur.execute(request)
 
-        for indiceCoef in range(len(structureNeuronale[2])) :
+            res = cur.fetchall()
 
-            coefficients[2][neurone].append(res[indiceCoef][1])
+            for indiceCoef in range(len(structureNeuronale[2])) :
+
+                coefficients[2][neurone].append(res[indiceCoef][1])
 
     neuroneCouche3Numero1 = Neurone(coefficients[2][0])
     neuroneCouche3Numero2 = Neurone(coefficients[2][1])

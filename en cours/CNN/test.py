@@ -1,22 +1,22 @@
-import sqlite3
+# import sqlite3
 
-con = sqlite3.connect("CNN_base_de_donee.sqli")
-cur=con.cursor()
+# con = sqlite3.connect("CNN_base_de_donee.sqli")
+# cur=con.cursor()
 
-request = f"""
-SELECT *
-FROM COUCHE1NEURONE2
-"""
+# request = f"""
+# SELECT *
+# FROM COUCHE1NEURONE2
+# """
 
-cur.execute(request)
+# cur.execute(request)
 
-res = cur.fetchall()
-print(res)
+# res = cur.fetchall()
+# print(res)
 
-con.commit()
-con.close()
+# con.commit()
+# con.close()
 
-# from random import *
+# # from random import *
 
 
-# print(uniform(-5, 5))
+# # print(uniform(-5, 5))

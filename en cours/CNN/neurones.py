@@ -136,6 +136,25 @@ class ReseauDeNeurones :
     
     
 
+    def coefficients(self) :
+        """
+        Sortie :
+            - La liste de tous les coeffs du réseau de neurones
+        """
+        coefsTotaux = []
+
+        for couche in self.__couches :
+
+            coefsLocaux = []
+
+            for neurone in couche :
+
+                coefsLocaux.append(neurone.coefs())
+
+            coefsTotaux.append(coefsLocaux)
+
+        return coefsTotaux
+
     def changer_inputs(self, new_inputs) :
         """
         Entrée : <new_inputs>, la liste des nouveaux inputs à mettre
