@@ -3,9 +3,12 @@ from random import *
 from CNN_python_init import *
 from neurones import *
 
-imagePath = "C:/Users/Riwan/Documents/GitHub/Projet-NSI/en cours/CNN/nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/7.png"
+IMAGEDEBUTPATH = "P:/Documents/GitHub/Projet-NSI/en cours/CNN/nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/"
+IMAGEFINPATH = ".png"
 BASEDEDONNEEPATH = "CNN_base_de_donee.sqli"
 LISTEDESRESULTATSPOSIBLES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+imagePath = IMAGEDEBUTPATH + "7" + IMAGEFINPATH
+
 
 
 def cost_CNN(reseauDeNeurones : ReseauDeNeurones, wantedResults : list) :
@@ -80,7 +83,7 @@ def calcul_cost_moyen(coefficients = None) :
 
     for indiceReseau in range(nbSorties) :
 
-        imagePath = f"C:/Users/Riwan/Documents/GitHub/Projet-NSI/en cours/CNN/nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/{indiceReseau}.png"
+        imagePath = f"{IMAGEDEBUTPATH}{indiceReseau}{IMAGEFINPATH}"
         reseauDeNeurone = init_CNN(imagePath, baseDeDonnePath, coefficients)
         reseauxDeNeurones.append(reseauDeNeurone)
         resultatVoulu = indiceReseau
