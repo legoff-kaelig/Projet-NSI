@@ -1,13 +1,15 @@
 import sqlite3
+import os
 from random import *
 from CNN_python_init import *
 from neurones import *
 
-IMAGEDEBUTPATH = "P:/Documents/GitHub/Projet-NSI/en cours/CNN/nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/"
+os.chdir("en cours/CNN")
+
+IMAGEDEBUTPATH = os.path.join(os.getcwd(),"nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/")
 IMAGEFINPATH = ".png"
 BASEDEDONNEEPATH = "CNN_base_de_donee.sqli"
 LISTEDESRESULTATSPOSIBLES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-imagePath = IMAGEDEBUTPATH + "7" + IMAGEFINPATH
 
 
 

@@ -2,6 +2,7 @@ from neurones import *
 from random import *
 from PIL.Image import *
 import sqlite3
+import os
 
 def init_CNN(imagePath, baseDeDoneePath = None, coefficients = None) :
 

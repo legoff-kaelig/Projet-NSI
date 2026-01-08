@@ -20,3 +20,9 @@
 
 
 # # print(uniform(-5, 5))
+
+import os
+
+print(os.getcwd()) 
+os.chdir("en cours/CNN")
+print(os.getcwd()) 

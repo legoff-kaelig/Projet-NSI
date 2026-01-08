@@ -1,6 +1,9 @@
 import sqlite3
+import os
 from random import *
 from PIL.Image import *
+
+os.chdir("en cours/CNN")
 
 structureNeuronale = [[[],[],[],[],[],[],[],[],[],[],[],[],[]],
                        [[],[],[],[],[],[],[],[],[],[],[],[],[]],

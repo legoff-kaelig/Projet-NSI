@@ -125,7 +125,7 @@ class ReseauDeNeurones :
 
             self.__couches.append(matriceDuReseau[couche])
         
-
+        self.__sorties = self.sortie_init()
 
     def couches(self) :
         """
@@ -189,7 +189,7 @@ class ReseauDeNeurones :
     
     
 
-    def sortie(self) :
+    def sortie_init(self) :
 
         """
         Entrée : <inputs>, la liste des liste de nombres à faire passer dans les fonctions des neurones
@@ -213,3 +213,12 @@ class ReseauDeNeurones :
             listeDesInputs.append(listeDesResultats)
             
         return listeDesResultats
+    
+
+
+    def sortie(self) :
+        """
+        Sortie :
+            - La liste des sorties du réseau de neurone
+        """
+        return self.__sorties
