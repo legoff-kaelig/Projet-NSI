@@ -10,6 +10,7 @@ IMAGEDEBUTPATH = os.path.join(os.getcwd(),"nombres écrits à la main pour entra
 IMAGEFINPATH = ".png"
 BASEDEDONNEEPATH = "CNN_base_de_donee.sqli"
 LISTEDESRESULTATSPOSIBLES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+COEFFICIENTSLISTE = []
 
 
 
