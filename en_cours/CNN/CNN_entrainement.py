@@ -4,7 +4,7 @@ from random import *
 from CNN_python_init import *
 from neurones import *
 
-os.chdir("en cours/CNN")
+os.chdir("en_cours/CNN")
 
 IMAGEDEBUTPATH = os.path.join(os.getcwd(),"nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/")
 IMAGEFINPATH = ".png"

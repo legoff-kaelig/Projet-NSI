@@ -3,7 +3,7 @@ import os
 from random import *
 from PIL.Image import *
 
-os.chdir("en cours/CNN")
+os.chdir("en_cours/CNN")
 
 structureNeuronale = [[[],[],[],[],[],[],[],[],[],[],[],[],[]],
                        [[],[],[],[],[],[],[],[],[],[],[],[],[]],
