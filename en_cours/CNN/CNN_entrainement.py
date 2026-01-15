@@ -13,7 +13,6 @@ LISTEDESRESULTATSPOSIBLES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 COEFFICIENTSLISTE = []
 
 
-
 def cost_CNN(reseauDeNeurones : ReseauDeNeurones, wantedResults : list) :
     """
     Entrées :
@@ -133,5 +132,29 @@ def sauvegarde_coefficients(listeDesCoefficients, listeDesBiais) :
     con.commit()
     con.close()
 
+def training(nbTours) :
 
+    structuresNeuronales = []
+
+    structuresNeuronales.append(init_CNN(BASEDEDONNEEPATH))
+
+    for structureNeuronaleIndicePrimaire in range(1,11) :
+
+        structuresNeuronales.append(init_CNN(BASEDEDONNEEPATH).changer_coefs_randomly())
+
+        for structureNeuronaleIndiceVariante in range(10) :
+
+            structuresNeuronales.append(init_CNN(structuresNeuronales[structureNeuronaleIndicePrimaire]).multiplier_coefs_randomly())
+
+    indiceMax = 0
+
+    for structureNeuronaleIndice in range(len(structuresNeuronales)) :
+        
+        if calcul_cost_moyen(structuresNeuronales[structureNeuronaleIndice].coefficients()) >= calcul_cost_moyen(structuresNeuronales[indiceMax].coefficients()) :
+
+            indiceMax = structureNeuronaleIndice
+
+    return structuresNeuronales[indiceMax].coefficients()
+
+print(calcul_cost_moyen(training(1)))
 print(calcul_cost_moyen())

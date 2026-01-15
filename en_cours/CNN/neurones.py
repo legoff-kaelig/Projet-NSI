@@ -1,4 +1,4 @@
-from random import random
+from random import *
 import math
 
 def sigmoid(x):
@@ -82,7 +82,7 @@ class Neurone :
 
         for _ in range(nb_coefs) :
 
-            new_coefs.append(random())
+            new_coefs.append(uniform(-15, 15))
 
         self.changer_coefs(new_coefs)
 
@@ -127,6 +127,8 @@ class ReseauDeNeurones :
         
         self.__sorties = self.sortie_init()
 
+
+
     def couches(self) :
         """
         Sortie : <self.__couche>, les couches de notre réseau de neurones
@@ -155,6 +157,8 @@ class ReseauDeNeurones :
 
         return coefsTotaux
 
+
+
     def changer_inputs(self, new_inputs) :
         """
         Entrée : <new_inputs>, la liste des nouveaux inputs à mettre
@@ -180,14 +184,55 @@ class ReseauDeNeurones :
             for neurone in self.__couches[indiceCouche] :
 
                 new_coefs_neurone = []
+                old_coefs_neurone = neurone.coefs()
 
-                for indiceCoef in range(len(neurone.coefs())) :
+                for indiceCoef in range(len(old_coefs_neurone)) :
 
-                    new_coefs_neurone.append(neurone.coefs()[indiceCoef] * new_coefs[indiceCouche][indiceCoef])
+                    new_coefs_neurone.append(old_coefs_neurone[indiceCoef] * new_coefs[indiceCouche][indiceCoef])
+
+                neurone.changer_coefs(new_coefs_neurone)
+
+
+    
+    def multiplier_coefs_randomly(self) :
+        """
+        Action : Multiplication de tous les coefficients des neurones du réseau par un nombre àléatoire entre -15 et 15
+        """
+
+        for indiceCouche in range(len(self.__couches)) :
+
+            for neurone in self.__couches[indiceCouche] :
+
+                new_coefs_neurone = []
+                old_coefs_neurone = neurone.coefs()
+
+                for indiceCoef in range(len(old_coefs_neurone)) :
+
+                    new_coefs_neurone.append(old_coefs_neurone[indiceCoef] * uniform(-15, 15))
 
                 neurone.changer_coefs(new_coefs_neurone)
     
     
+
+    def changer_coefs_randomly(self) :
+        """
+        Action : Changement de tous les coefficients des neurones du réseau par un nombre àléatoire entre -15 et 15
+        """
+
+        for indiceCouche in range(len(self.__couches)) :
+
+            for neurone in self.__couches[indiceCouche] :
+
+                new_coefs_neurone = []
+                old_coefs_neurone = neurone.coefs()
+
+                for indiceCoef in range(len(old_coefs_neurone)) :
+
+                    new_coefs_neurone.append(uniform(-15, 15))
+
+                neurone.changer_coefs(new_coefs_neurone)
+    
+
 
     def sortie_init(self) :
 
