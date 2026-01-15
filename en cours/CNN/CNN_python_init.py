@@ -21,7 +21,7 @@ def init_CNN(imagePath, baseDeDoneePath = None, coefficients = None) :
         coefficients = [[], [], []]
 
     structureNeuronale = [[], [], [], []]
-    
+ 
     image = open(imagePath)
     largeurImage, hauteurImage = image.size
     imagePxParPxMaisEnGris = []

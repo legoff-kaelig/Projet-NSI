@@ -4,7 +4,7 @@ from random import *
 from CNN_python_init import *
 from neurones import *
 
-os.chdir("en cours/CNN")
+os.chdir("en_cours/CNN")
 
 IMAGEDEBUTPATH = os.path.join(os.getcwd(),"nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/")
 IMAGEFINPATH = ".png"
@@ -97,5 +97,41 @@ def calcul_cost_moyen(coefficients = None) :
     costsMoy /= nbSorties
 
     return costsMoy
+
+
+
+def sauvegarde_coefficients(listeDesCoefficients, listeDesBiais) :
+
+    con = sqlite3.connect(BASEDEDONNEEPATH)
+    cur=con.cursor()
+
+    nbCouches = len(listeDesCoefficients)
+
+    for couche in range(nbCouches) :
+        
+        cur.execute(request)
+
+        for neurone in range(len(listeDesBiais[couche])) :
+
+            request = f""" 
+            UPDATE COUCHES{couche}
+            SET biais = {listeDesBiais[couche][neurone]}
+            WHERE neurones = {neurone}
+            """
+
+            for coefficient in range(len(listeDesCoefficients[couche])) :
+
+                request = f"""
+                UPDATE COUCHE{couche}NEURONE{neurone}
+                SET coefficient = {listeDesCoefficients[couche][coefficient]}
+                WHERE ID = {coefficient + 1}
+                """
+
+                cur.execute(request)
+
+
+    con.commit()
+    con.close()
+
 
 print(calcul_cost_moyen())
