@@ -8,9 +8,13 @@ def sigmoid(x):
     Sortie : un flottant compris entre 0 et 1
     """
 
-    sig = 1 / (1 + math.exp(-x))
-    return sig
+    if x >= 0:
 
+        return 1 / (1 + math.exp(-x))
+    
+    else:
+        
+        return math.exp(x) / (1 + math.exp(x))
 
 
 def func_de_base_somme(termes) :

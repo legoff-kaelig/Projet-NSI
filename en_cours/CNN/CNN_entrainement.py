@@ -99,7 +99,7 @@ def calcul_cost_moyen(coefficients = None) :
 
 
 
-def sauvegarde_coefficients(listeDesCoefficients, listeDesBiais) :
+def sauvegarde_coefficients(listeDesCoefficients, listeDesBiais = [[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]]) :
 
     con = sqlite3.connect(BASEDEDONNEEPATH)
     cur=con.cursor()
@@ -107,8 +107,6 @@ def sauvegarde_coefficients(listeDesCoefficients, listeDesBiais) :
     nbCouches = len(listeDesCoefficients)
 
     for couche in range(nbCouches) :
-        
-        cur.execute(request)
 
         for neurone in range(len(listeDesBiais[couche])) :
 
@@ -118,11 +116,13 @@ def sauvegarde_coefficients(listeDesCoefficients, listeDesBiais) :
             WHERE neurones = {neurone}
             """
 
+            cur.execute(request)
+
             for coefficient in range(len(listeDesCoefficients[couche])) :
 
                 request = f"""
                 UPDATE COUCHE{couche}NEURONE{neurone}
-                SET coefficient = {listeDesCoefficients[couche][coefficient]}
+                SET coefficient = {listeDesCoefficients[couche][neurone][coefficient]}
                 WHERE ID = {coefficient + 1}
                 """
 
@@ -132,29 +132,46 @@ def sauvegarde_coefficients(listeDesCoefficients, listeDesBiais) :
     con.commit()
     con.close()
 
+
+
 def training(nbTours) :
 
+    if nbTours <= 0 :
+
+        return
+
+    imagePath = IMAGEDEBUTPATH + "1" + IMAGEFINPATH
     structuresNeuronales = []
+    structuresNeuronales.append(init_CNN(imagePath, BASEDEDONNEEPATH))
 
-    structuresNeuronales.append(init_CNN(BASEDEDONNEEPATH))
+    for structureNeuronaleIndicePrimaire in range(1, 11) :
 
-    for structureNeuronaleIndicePrimaire in range(1,11) :
+        structureNeuronaleTemporaire = init_CNN(imagePath, BASEDEDONNEEPATH)
+        structureNeuronaleTemporaire.changer_coefs_randomly()
+        structuresNeuronales.append(structureNeuronaleTemporaire)
 
-        structuresNeuronales.append(init_CNN(BASEDEDONNEEPATH).changer_coefs_randomly())
+        for structureNeuronaleIndiceVariante in range(1, 11) :
 
-        for structureNeuronaleIndiceVariante in range(10) :
+            indiceStructureNeuronale = structureNeuronaleIndicePrimaire * structureNeuronaleIndiceVariante
 
-            structuresNeuronales.append(init_CNN(structuresNeuronales[structureNeuronaleIndicePrimaire]).multiplier_coefs_randomly())
+            structureNeuronaleTemporaire = init_CNN(imagePath, None, structuresNeuronales[indiceStructureNeuronale].coefficients())
+            structureNeuronaleTemporaire.multiplier_coefs_randomly()
+            structuresNeuronales.append(structureNeuronaleTemporaire)
 
-    indiceMax = 0
+    indiceMin = 0
 
     for structureNeuronaleIndice in range(len(structuresNeuronales)) :
         
-        if calcul_cost_moyen(structuresNeuronales[structureNeuronaleIndice].coefficients()) >= calcul_cost_moyen(structuresNeuronales[indiceMax].coefficients()) :
+        if calcul_cost_moyen(structuresNeuronales[structureNeuronaleIndice].coefficients()) <= calcul_cost_moyen(structuresNeuronales[indiceMin].coefficients()) :
 
-            indiceMax = structureNeuronaleIndice
+            indiceMin = structureNeuronaleIndice
 
-    return structuresNeuronales[indiceMax].coefficients()
+    meilleursCoefs = structuresNeuronales[indiceMin].coefficients()
 
-print(calcul_cost_moyen(training(1)))
+    print(calcul_cost_moyen(meilleursCoefs))
+    sauvegarde_coefficients(meilleursCoefs)
+    training(nbTours - 1)
+
+
+training(4)
 print(calcul_cost_moyen())

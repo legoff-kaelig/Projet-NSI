@@ -64,7 +64,6 @@ def init_CNN(imagePath, baseDeDoneePath = None, coefficients = None) :
             SELECT *
             FROM COUCHE0NEURONE{neurone}
             """
-
             cur.execute(request)
 
             res = cur.fetchall()
