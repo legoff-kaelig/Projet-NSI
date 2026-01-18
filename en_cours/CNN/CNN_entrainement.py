@@ -118,7 +118,7 @@ def sauvegarde_coefficients(listeDesCoefficients, listeDesBiais = [[0,0,0,0,0,0,
 
             cur.execute(request)
 
-            for coefficient in range(len(listeDesCoefficients[couche])) :
+            for coefficient in range(len(listeDesCoefficients[couche][neurone])) :
 
                 request = f"""
                 UPDATE COUCHE{couche}NEURONE{neurone}
@@ -147,31 +147,36 @@ def training(nbTours) :
     for structureNeuronaleIndicePrimaire in range(1, 11) :
 
         structureNeuronaleTemporaire = init_CNN(imagePath, BASEDEDONNEEPATH)
-        structureNeuronaleTemporaire.changer_coefs_randomly()
+        structureNeuronaleTemporaire.multiplier_coefs_randomly(5)
         structuresNeuronales.append(structureNeuronaleTemporaire)
 
-        for structureNeuronaleIndiceVariante in range(1, 11) :
+        for structureNeuronaleIndiceVariante in range(1, 11) : 
 
             indiceStructureNeuronale = structureNeuronaleIndicePrimaire * structureNeuronaleIndiceVariante
 
             structureNeuronaleTemporaire = init_CNN(imagePath, None, structuresNeuronales[indiceStructureNeuronale].coefficients())
-            structureNeuronaleTemporaire.multiplier_coefs_randomly()
+            structureNeuronaleTemporaire.multiplier_coefs_randomly(2)
             structuresNeuronales.append(structureNeuronaleTemporaire)
 
     indiceMin = 0
+    cost_moyen_min = calcul_cost_moyen(structuresNeuronales[indiceMin].coefficients())
 
-    for structureNeuronaleIndice in range(len(structuresNeuronales)) :
+    for structureNeuronaleIndice in range(1, len(structuresNeuronales)) :
         
-        if calcul_cost_moyen(structuresNeuronales[structureNeuronaleIndice].coefficients()) <= calcul_cost_moyen(structuresNeuronales[indiceMin].coefficients()) :
+        cost_moyen_a_tester = calcul_cost_moyen(structuresNeuronales[structureNeuronaleIndice].coefficients())
+
+        if cost_moyen_a_tester <= cost_moyen_min :
 
             indiceMin = structureNeuronaleIndice
+            cost_moyen_min = cost_moyen_a_tester
 
     meilleursCoefs = structuresNeuronales[indiceMin].coefficients()
 
-    print(calcul_cost_moyen(meilleursCoefs))
     sauvegarde_coefficients(meilleursCoefs)
+
+    print(calcul_cost_moyen(),"\n")
     training(nbTours - 1)
 
 
-training(4)
+training(100)
 print(calcul_cost_moyen())

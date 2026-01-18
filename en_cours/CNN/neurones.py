@@ -54,7 +54,13 @@ class Neurone :
 
     def coefs(self) :
 
-        return self.__coefs
+        coefsAReturn = []
+
+        for coef in self.__coefs :
+            
+            coefsAReturn.append(coef)
+
+        return coefsAReturn
     
 
 
@@ -198,7 +204,7 @@ class ReseauDeNeurones :
 
 
     
-    def multiplier_coefs_randomly(self) :
+    def multiplier_coefs_randomly(self, ecart) :
         """
         Action : Multiplication de tous les coefficients des neurones du réseau par un nombre àléatoire entre -15 et 15
         """
@@ -212,7 +218,7 @@ class ReseauDeNeurones :
 
                 for indiceCoef in range(len(old_coefs_neurone)) :
 
-                    new_coefs_neurone.append(old_coefs_neurone[indiceCoef] * uniform(-15, 15))
+                    new_coefs_neurone.append(old_coefs_neurone[indiceCoef] * uniform(-ecart, ecart))
 
                 neurone.changer_coefs(new_coefs_neurone)
     
