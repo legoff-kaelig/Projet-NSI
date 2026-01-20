@@ -147,7 +147,7 @@ def training(nbTours) :
     for structureNeuronaleIndicePrimaire in range(1, 11) :
 
         structureNeuronaleTemporaire = init_CNN(imagePath, BASEDEDONNEEPATH)
-        structureNeuronaleTemporaire.multiplier_coefs_randomly(10)
+        structureNeuronaleTemporaire.changer_coefs_randomly()
         structuresNeuronales.append(structureNeuronaleTemporaire)
 
         for structureNeuronaleIndiceVariante in range(1, 11) : 
