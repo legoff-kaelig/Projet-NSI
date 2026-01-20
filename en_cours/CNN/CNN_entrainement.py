@@ -9,7 +9,7 @@ os.chdir("en_cours/CNN")
 IMAGEDEBUTPATH = os.path.join(os.getcwd(),"nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/")
 IMAGEFINPATH = ".png"
 BASEDEDONNEEPATH = "CNN_base_de_donee.sqli"
-LISTEDESRESULTATSPOSIBLES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+LISTEDESRESULTATSPOSSIBLES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 COEFFICIENTSLISTE = []
 
 
@@ -44,11 +44,11 @@ def create_wanted_results(resultatVoulu : int) :
     Sortie :
         - Une liste de la longueur de la liste de sortie du réseau de neurones actuellement pris en charge par ce programme d'entraînement avec tout à 0 sauf celui d'indice <resultatVoulu> égal à 1
     """
-    assert resultatVoulu in LISTEDESRESULTATSPOSIBLES
+    assert resultatVoulu in LISTEDESRESULTATSPOSSIBLES
     
     wantedResults = []
 
-    for index in range(len(LISTEDESRESULTATSPOSIBLES)) :
+    for index in range(len(LISTEDESRESULTATSPOSSIBLES)) :
 
         if index == resultatVoulu :
 
@@ -71,7 +71,7 @@ def calcul_cost_moyen(coefficients = None) :
         - Le coût moyen de ce modèle pour toutes les sorties possibles par rapport à des datas d'entraînement
     """
     reseauxDeNeurones = []
-    nbSorties = len(LISTEDESRESULTATSPOSIBLES)
+    nbSorties = len(LISTEDESRESULTATSPOSSIBLES)
 
     if coefficients == None :
 
