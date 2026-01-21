@@ -150,12 +150,12 @@ def training(nbTours) :
         structureNeuronaleTemporaire.changer_coefs_randomly()
         structuresNeuronales.append(structureNeuronaleTemporaire)
 
-        for structureNeuronaleIndiceVariante in range(1, 11) : 
+        for structureNeuronaleIndiceVariante in range(1, 101) : 
 
             indiceStructureNeuronale = structureNeuronaleIndicePrimaire * structureNeuronaleIndiceVariante
 
             structureNeuronaleTemporaire = init_CNN(imagePath, None, structuresNeuronales[indiceStructureNeuronale].coefficients())
-            structureNeuronaleTemporaire.multiplier_coefs_randomly(0.5)
+            structureNeuronaleTemporaire.multiplier_coefs_randomly(2)
             structuresNeuronales.append(structureNeuronaleTemporaire)
 
     indiceMin = 0
@@ -178,5 +178,5 @@ def training(nbTours) :
     training(nbTours - 1)
 
 
-training(100)
+training(1000)
 print(calcul_cost_moyen())
