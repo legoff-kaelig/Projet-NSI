@@ -140,6 +140,9 @@ class ReseauDeNeurones :
 
 
     def inputs(self) :
+        """
+        Sortie : <self.__inputs>, les inputs du réseau de neurone
+        """
 
         return self.__inputs
 

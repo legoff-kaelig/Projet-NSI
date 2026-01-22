@@ -100,7 +100,14 @@ def calcul_cost_moyen(coefficients = None) :
 
 
 def sauvegarde_coefficients(listeDesCoefficients, listeDesBiais = [[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]]) :
+    """
+    Entrées : 
+        - <listeDesCoefficients> : La liste des coefficients du réseau à sauvegarder
+        - <listeDesBiais> : La liste des biais à sauvegarder
 
+    Action :
+        - Enregistre les coefficients et les biais dans la base de donnée
+    """
     con = sqlite3.connect(BASEDEDONNEEPATH)
     cur=con.cursor()
 
@@ -135,7 +142,14 @@ def sauvegarde_coefficients(listeDesCoefficients, listeDesBiais = [[0,0,0,0,0,0,
 
 
 def training(nbTours) :
+    """
+    Entrée :
+        - <nbTours> : Le nombre de tours d'entraînement qui vont être effectués
 
+    Action : 
+        - Créer plusieurs variantes du réseau de neurones principal
+        - Sauvegarder le plus efficient par rapport à son coût moyen
+    """
     if nbTours <= 0 :
 
         return

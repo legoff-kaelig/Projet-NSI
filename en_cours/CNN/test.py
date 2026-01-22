@@ -10,6 +10,9 @@ def resultat_CNN(reseauDeNeurones : ReseauDeNeurones) :
     """
     Entrées :
         - <reseauDeNeurones> : Un réseau de neurones
+
+    Sortie :
+        - <resultatMax> : La sortie prépondérante dans la liste des sorties du réseau de neurone
     """
     results = reseauDeNeurones.sortie()
 
