@@ -177,6 +177,5 @@ def training(nbTours) :
     print(calcul_cost_moyen(),"\n")
     training(nbTours - 1)
 
-
 training(10)
 print(calcul_cost_moyen())
