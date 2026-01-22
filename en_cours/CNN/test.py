@@ -3,23 +3,26 @@ from CNN_python_init import *
 
 os.chdir("en_cours/CNN")
 
-IMAGEPATH = os.path.join(os.getcwd(),"nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/0.png")
+IMAGEPATH = os.path.join(os.getcwd(),"nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/7.png")
 BASEDEDONNEEPATH = "CNN_base_de_donee.sqli"
 
-def sortie_max() :
+def resultat_CNN(reseauDeNeurones : ReseauDeNeurones, resultatVoulu) :
+    """
+    Entrées :
+        - <reseauDeNeurones> : Un réseau de neurones
+    """
+    results = reseauDeNeurones.sortie()
 
-    sortiesEnListe = init_CNN(IMAGEPATH, BASEDEDONNEEPATH).sortie()
+    resultatMax = 0
 
-    print(sortiesEnListe)
+    for indexResult in range(len(results)) :
 
-    indiceSortieMax = 0
+        if results[indexResult] > results[resultatMax] :
 
-    for i in range(len(sortiesEnListe)) :
-        
-        if sortiesEnListe[i] > sortiesEnListe[indiceSortieMax] :
+            resultatMax = indexResult
 
-            indiceSortieMax = i
-        
-    return indiceSortieMax
+    return resultatMax
 
-print(sortie_max())
+reseau = init_CNN(IMAGEPATH, BASEDEDONNEEPATH)
+print(reseau.inputs())
+print(reseau.sortie_init())

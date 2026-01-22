@@ -19,7 +19,7 @@ def cost_CNN(reseauDeNeurones : ReseauDeNeurones, wantedResults : list) :
         - <reseauDeNeurones> : Un réseau de neurones
         - <wantedResults> : la liste des sorties idéales du réseau de neurones
 
-    Sorite :
+    Sortie :
         - Le coût total du réseau de neurones, c'est à dire l'écart entre l'idéal et la réalité des sorties
     """
     results = reseauDeNeurones.sortie()
@@ -150,7 +150,7 @@ def training(nbTours) :
         structureNeuronaleTemporaire.changer_coefs_randomly()
         structuresNeuronales.append(structureNeuronaleTemporaire)
 
-        for structureNeuronaleIndiceVariante in range(1, 101) : 
+        for structureNeuronaleIndiceVariante in range(1, 11) : 
 
             indiceStructureNeuronale = structureNeuronaleIndicePrimaire * structureNeuronaleIndiceVariante
 
@@ -178,5 +178,5 @@ def training(nbTours) :
     training(nbTours - 1)
 
 
-training(1000)
+training(10)
 print(calcul_cost_moyen())

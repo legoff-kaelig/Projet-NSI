@@ -139,6 +139,10 @@ class ReseauDeNeurones :
 
 
 
+    def inputs(self) :
+
+        return self.__inputs
+
     def couches(self) :
         """
         Sortie : <self.__couche>, les couches de notre réseau de neurones
@@ -177,6 +181,7 @@ class ReseauDeNeurones :
         """
 
         self.__inputs = new_inputs
+        self.__sorties = self.sortie_init()
     
 
 
@@ -202,6 +207,8 @@ class ReseauDeNeurones :
 
                 neurone.changer_coefs(new_coefs_neurone)
 
+        self.__sorties = self.sortie_init()
+
 
     
     def multiplier_coefs_randomly(self, ecart) :
@@ -221,6 +228,8 @@ class ReseauDeNeurones :
                     new_coefs_neurone.append(old_coefs_neurone[indiceCoef] * uniform(-ecart, ecart))
 
                 neurone.changer_coefs(new_coefs_neurone)
+
+        self.__sorties = self.sortie_init()
     
     
 
@@ -241,6 +250,8 @@ class ReseauDeNeurones :
                     new_coefs_neurone.append(uniform(-15, 15))
 
                 neurone.changer_coefs(new_coefs_neurone)
+
+        self.__sorties = self.sortie_init()
     
 
 
