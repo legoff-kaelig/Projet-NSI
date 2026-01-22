@@ -1,0 +1,38 @@
+[
+  {
+    "time": "2026-01-22T10: 40: 00Z",
+    "values": {
+      "altimeterSetting": 988.72,
+      "cloudBase": 0,
+      "cloudCeiling": null,
+      "cloudCover": 15,
+      "dewPoint": 6.6,
+      "evapotranspiration": 0.043,
+      "freezingRainIntensity": 0,
+      "humidity": 82.78,
+      "iceAccumulation": 0,
+      "iceAccumulationLwe": 0,
+      "precipitationProbability": 0,
+      "pressureSeaLevel": 989.25,
+      "pressureSurfaceLevel": 978.79,
+      "rainAccumulation": 0,
+      "rainIntensity": 0,
+      "sleetAccumulation": 0,
+      "sleetAccumulationLwe": 0,
+      "sleetIntensity": 0,
+      "snowAccumulation": 0,
+      "snowAccumulationLwe": 0,
+      "snowDepth": null,
+      "snowIntensity": 0,
+      "temperature": 9.35,
+      "temperatureApparent": 9.4,
+      "uvHealthConcern": 0,
+      "uvIndex": 1,
+      "visibility": 14.9,
+      "weatherCode": 1100,
+      "windDirection": 233,
+      "windGust": 11.5,
+      "windSpeed": 6.2
+    }
+  }
+]
