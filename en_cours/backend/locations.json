@@ -1,0 +1,16 @@
+[
+  {
+    "latitude": 48.2738000,
+    "longitude": -1.8580000,
+    "accuracy": 26.562999725341797,
+    "timestamp": "12/24/2025, 10:35:51 PM",
+    "source": "native"
+  },
+  {
+    "latitude": 48.2738000,
+    "longitude": 1.8580000,
+    "accuracy": 26.562999725341797,
+    "timestamp": "12/24/2025, 10:35:50 PM",
+    "source": "native"
+  }
+]
