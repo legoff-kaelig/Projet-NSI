@@ -141,6 +141,24 @@ def sauvegarde_coefficients(listeDesCoefficients, listeDesBiais = [[0,0,0,0,0,0,
 
 
 
+def calcul_cost_moyen_liste_de_reseaux(listeDeReseauxDeNeurones):
+
+    indiceMin = 0
+    cost_moyen_min = calcul_cost_moyen(listeDeReseauxDeNeurones[indiceMin].coefficients())
+
+    for structureNeuronaleIndice in range(1, len(listeDeReseauxDeNeurones)) :
+        
+        cost_moyen_a_tester = calcul_cost_moyen(listeDeReseauxDeNeurones[structureNeuronaleIndice].coefficients())
+
+        if cost_moyen_a_tester <= cost_moyen_min :
+
+            indiceMin = structureNeuronaleIndice
+            cost_moyen_min = cost_moyen_a_tester
+
+    return listeDeReseauxDeNeurones[indiceMin].coefficients()
+
+
+
 def training(nbTours) :
     """
     Entrée :
@@ -155,38 +173,24 @@ def training(nbTours) :
         return
 
     imagePath = IMAGEDEBUTPATH + "1" + IMAGEFINPATH
-    structuresNeuronales = []
-    structuresNeuronales.append(init_CNN(imagePath, BASEDEDONNEEPATH))
+    listeDeReseauxDeNeurones = []
+    listeDeReseauxDeNeurones.append(init_CNN(imagePath, BASEDEDONNEEPATH))
 
     for structureNeuronaleIndicePrimaire in range(1, 11) :
 
         structureNeuronaleTemporaire = init_CNN(imagePath, BASEDEDONNEEPATH)
         structureNeuronaleTemporaire.changer_coefs_randomly()
-        structuresNeuronales.append(structureNeuronaleTemporaire)
+        listeDeReseauxDeNeurones.append(structureNeuronaleTemporaire)
 
         for structureNeuronaleIndiceVariante in range(1, 11) : 
 
             indiceStructureNeuronale = structureNeuronaleIndicePrimaire * structureNeuronaleIndiceVariante
 
-            structureNeuronaleTemporaire = init_CNN(imagePath, None, structuresNeuronales[indiceStructureNeuronale].coefficients())
+            structureNeuronaleTemporaire = init_CNN(imagePath, None, listeDeReseauxDeNeurones[indiceStructureNeuronale].coefficients())
             structureNeuronaleTemporaire.multiplier_coefs_randomly(2)
-            structuresNeuronales.append(structureNeuronaleTemporaire)
+            listeDeReseauxDeNeurones.append(structureNeuronaleTemporaire)
 
-    indiceMin = 0
-    cost_moyen_min = calcul_cost_moyen(structuresNeuronales[indiceMin].coefficients())
-
-    for structureNeuronaleIndice in range(1, len(structuresNeuronales)) :
-        
-        cost_moyen_a_tester = calcul_cost_moyen(structuresNeuronales[structureNeuronaleIndice].coefficients())
-
-        if cost_moyen_a_tester <= cost_moyen_min :
-
-            indiceMin = structureNeuronaleIndice
-            cost_moyen_min = cost_moyen_a_tester
-
-    meilleursCoefs = structuresNeuronales[indiceMin].coefficients()
-
-    sauvegarde_coefficients(meilleursCoefs)
+    sauvegarde_coefficients(calcul_cost_moyen_liste_de_reseaux(listeDeReseauxDeNeurones))
 
     print(calcul_cost_moyen(),"\n")
     training(nbTours - 1)
