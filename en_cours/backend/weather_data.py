@@ -22,7 +22,10 @@ timestamp = datas[0]["timestamp"].split(", ")[1]
 url = f'https://api.tomorrow.io/v4/weather/forecast?location={latitude},{longitude}&apikey={API_KEY}'
 fields = [
     'humidity', 'freezingRainIntensity',
-    'precipitationProbability'
+    'precipitationProbability',
+    'cloudCover',
+    'windDirection', 'windSpeed',
+    "iceAccumulation"
 ]
 
 print(timestamp)
