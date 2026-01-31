@@ -15,6 +15,12 @@ def sigmoid(x):
     else:
         
         return math.exp(x) / (1 + math.exp(x))
+    
+
+
+def sigmoid_derivee(x) :
+
+    return math.exp(-x) / ((1 + math.exp(-x))**2)
 
 
 def func_de_base_somme(termes) :
@@ -116,6 +122,20 @@ class Neurone :
         inputsFunc.append(self.__biais)
 
         return sigmoid(self.__func(inputsFunc))
+    
+
+
+    def derivee_partielle(self, indiceCoefADeriver, inputsSortie : list) :
+
+        assert len(inputsSortie) == len(self.__coefs)
+
+        inputsFunc = []
+        
+        inputsFunc.append(inputsSortie[indiceCoefADeriver])
+
+        inputsFunc.append(self.__biais)
+
+        return sigmoid_derivee(self.__func(inputsFunc))
 
 
 
@@ -281,6 +301,38 @@ class ReseauDeNeurones :
             listeDesInputs.pop()
             listeDesInputs.append(listeDesResultats)
             
+        return listeDesResultats
+    
+
+
+    def derivee_partielle(self, indiceCoefADeriver, indiceCoucheCoefADeriver) :
+
+        listeDesInputs = []
+        listeDesInputs.append(self.__inputs)
+
+        for couche in self.__couches :
+            
+            listeDesResultats = []
+
+            if self.__couches[indiceCoucheCoefADeriver] == couche :
+
+                for neurone in couche :
+
+                    if couche[indiceCoefADeriver] == neurone :
+
+                        listeDesResultats.append(neurone.derivee_partielle(indiceCoefADeriver, listeDesInputs[0]))
+
+                    listeDesResultats.append(0)
+
+            else :
+
+                for _ in couche :
+
+                    listeDesResultats.append(0)
+
+            listeDesInputs.pop()
+            listeDesInputs.append(listeDesResultats)
+
         return listeDesResultats
     
 
