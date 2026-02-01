@@ -166,6 +166,8 @@ class ReseauDeNeurones :
 
         return self.__inputs
 
+
+
     def couches(self) :
         """
         Sortie : <self.__couche>, les couches de notre réseau de neurones
@@ -234,6 +236,32 @@ class ReseauDeNeurones :
 
 
     
+    def changer_coefs(self, newCoefs) :
+        """
+        Entrée : <newCoefs>, la liste des coefficients à mettre
+
+        Action : Changement de tous les coefficients des neurones du réseau par leur correspondant dans <newCoefs> 
+        """
+
+        assert len(newCoefs) == len(self.__couches)
+
+        for indiceCouche in range(len(self.__couches)) :
+
+            for neurone in self.__couches[indiceCouche] :
+
+                new_coefs_neurone = []
+                old_coefs_neurone = neurone.coefs()
+
+                for indiceCoef in range(len(old_coefs_neurone)) :
+
+                    new_coefs_neurone.append(newCoefs[indiceCouche][indiceCoef])
+
+                neurone.changer_coefs(new_coefs_neurone)
+
+        self.__sorties = self.sortie_init()
+
+
+
     def multiplier_coefs_randomly(self, ecart) :
         """
         Action : Multiplication de tous les coefficients des neurones du réseau par un nombre àléatoire entre -15 et 15
@@ -305,7 +333,7 @@ class ReseauDeNeurones :
     
 
 
-    def derivee_partielle(self, indiceCoefADeriver, indiceCoucheCoefADeriver) :
+    def derivee_partielle(self, indiceCoefADeriver, indiceNeuroneCoefADeriver, indiceCoucheCoefADeriver) :
 
         listeDesInputs = []
         listeDesInputs.append(self.__inputs)
@@ -318,7 +346,7 @@ class ReseauDeNeurones :
 
                 for neurone in couche :
 
-                    if couche[indiceCoefADeriver] == neurone :
+                    if couche[indiceNeuroneCoefADeriver] == neurone :
 
                         listeDesResultats.append(neurone.derivee_partielle(indiceCoefADeriver, listeDesInputs[0]))
 

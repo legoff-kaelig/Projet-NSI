@@ -8,6 +8,7 @@ os.chdir("en_cours/CNN")
 
 IMAGEDEBUTPATH = os.path.join(os.getcwd(),"nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/")
 IMAGEFINPATH = ".png"
+IMAGETESTPATH = IMAGEDEBUTPATH + "test" + IMAGEFINPATH
 BASEDEDONNEEPATH = "CNN_base_de_donee.sqli"
 LISTEDESRESULTATSPOSSIBLES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 COEFFICIENTSLISTE = []
@@ -36,7 +37,57 @@ def cost_CNN(reseauDeNeurones : ReseauDeNeurones, wantedResults : list) :
 
 
 
-def descente_de_gradient(imagePath, learningRate, coefficients = None) :
+def derivee_partielle_cost(reseauDeNeurones : ReseauDeNeurones, wantedResults : list, indiceCoefADeriver : int, indiceNeuroneCoefADeriver, indiceCoucheCoefADeriver : int) :
+
+    results = reseauDeNeurones.sortie()
+    resultsDerivees = reseauDeNeurones.derivee_partielle(indiceCoefADeriver, indiceNeuroneCoefADeriver, indiceCoucheCoefADeriver)
+
+    assert len(results) == len(wantedResults)
+
+    costDerive = 0
+
+    for indexResult in range(len(results)) :
+
+        costDerive += 2 * ((wantedResults[indexResult] - results[indexResult]) * (- resultsDerivees[indexResult]))
+
+    return costDerive
+
+
+
+def derivee_partielle_cost_moyen(coefficients , indiceCoefADeriver : int, indiceNeuroneCoefADeriver : int, indiceCoucheCoefADeriver : int) :
+    
+    reseauxDeNeurones = []
+    nbSorties = len(LISTEDESRESULTATSPOSSIBLES)
+
+    if coefficients == None :
+
+        baseDeDonnePath = BASEDEDONNEEPATH
+
+    else :
+
+        baseDeDonnePath = None
+
+    costsDerivesMoy = 0
+
+    for indiceReseau in range(nbSorties) :
+
+        imagePath = f"{IMAGEDEBUTPATH}{indiceReseau}{IMAGEFINPATH}"
+        reseauDeNeurone = init_CNN(imagePath, baseDeDonnePath, coefficients)
+        reseauxDeNeurones.append(reseauDeNeurone)
+        resultatVoulu = indiceReseau
+        wantedResults = create_wanted_results(resultatVoulu)
+        costDerive = derivee_partielle_cost(reseauxDeNeurones[indiceReseau], wantedResults, indiceCoefADeriver, indiceNeuroneCoefADeriver, indiceCoucheCoefADeriver)
+        costsDerivesMoy += costDerive
+
+    costsDerivesMoy /= nbSorties
+
+    return costsDerivesMoy
+
+
+
+def descente_de_gradient(learningRate, coefficients = None) :
+
+    imagePath = IMAGETESTPATH
 
     if coefficients == None :
 
@@ -57,9 +108,11 @@ def descente_de_gradient(imagePath, learningRate, coefficients = None) :
 
         nouveauxCoefficients.append([])
 
-        for indiceCoef in range(len(coefficients[couche])) :
+        for indiceNeurone in range(len(coefficients[couche])) :
 
-            nouveauxCoefficients.append(coefficients[couche][indiceCoef] - learningRate * (reseauDeNeurone.derivee_partielle(indiceCoef, couche)))
+            for indiceCoef in range(len(coefficients[indiceNeurone])) :
+
+                nouveauxCoefficients.append(coefficients[couche][indiceNeurone][indiceCoef] - learningRate * (derivee_partielle_cost_moyen(coefficients, indiceCoef, indiceNeurone, couche)))
 
     return nouveauxCoefficients
 
@@ -231,7 +284,7 @@ def training(nbTours) :
             for _ in range(1, 101) : 
 
                 structureNeuronaleTemporaire = init_CNN(imagePath, None, listeDeReseauxDeNeurones[indiceReseauAMultiplier].coefficients())
-                structureNeuronaleTemporaire.multiplier_coefs_randomly(2)
+                structureNeuronaleTemporaire.changer_coefs(descente_de_gradient(2, structureNeuronaleTemporaire.coefficients()))
                 listeDeReseauxDeNeurones.append(structureNeuronaleTemporaire)
 
                 cost_moyen_a_tester = calcul_cost_moyen(structureNeuronaleTemporaire.coefficients())
