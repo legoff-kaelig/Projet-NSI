@@ -247,16 +247,16 @@ class ReseauDeNeurones :
 
         for indiceCouche in range(len(self.__couches)) :
 
-            for neurone in self.__couches[indiceCouche] :
+            for indiceNeurone in range(len(self.__couches[indiceCouche])) :
 
                 new_coefs_neurone = []
-                old_coefs_neurone = neurone.coefs()
+                old_coefs_neurone = self.__couches[indiceCouche][indiceNeurone].coefs()
 
                 for indiceCoef in range(len(old_coefs_neurone)) :
 
-                    new_coefs_neurone.append(newCoefs[indiceCouche][indiceCoef])
+                    new_coefs_neurone.append(newCoefs[indiceCouche][indiceNeurone][indiceCoef])
 
-                neurone.changer_coefs(new_coefs_neurone)
+                self.__couches[indiceCouche][indiceNeurone].changer_coefs(new_coefs_neurone)
 
         self.__sorties = self.sortie_init()
 

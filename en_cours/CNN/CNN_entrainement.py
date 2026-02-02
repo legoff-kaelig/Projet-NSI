@@ -108,13 +108,23 @@ def descente_de_gradient(learningRate, coefficients = None) :
 
         nouveauxCoefficients.append([])
 
+        print(couche)
+
         for indiceNeurone in range(len(coefficients[couche])) :
 
-            for indiceCoef in range(len(coefficients[indiceNeurone])) :
+            print(" -",indiceNeurone)
 
-                nouveauxCoefficients.append(coefficients[couche][indiceNeurone][indiceCoef] - learningRate * (derivee_partielle_cost_moyen(coefficients, indiceCoef, indiceNeurone, couche)))
+            nouveauxCoefficients[couche].append([])
+
+            for indiceCoef in range(len(coefficients[couche][indiceNeurone])) :
+
+                ancienCoefTemp = coefficients[couche][indiceNeurone][indiceCoef]
+                deriveePartielleCostMoyenTemp = derivee_partielle_cost_moyen(coefficients, indiceCoef, indiceNeurone, couche)
+                nouveauxCoefficients[couche][indiceNeurone].append(ancienCoefTemp - learningRate * deriveePartielleCostMoyenTemp)
 
     return nouveauxCoefficients
+
+
 
 def create_wanted_results(resultatVoulu : int) :
     """
@@ -276,19 +286,19 @@ def training(nbTours) :
             print("Trouvé !!!")
         
         if cost_moyen_a_tester <= 1.5 :
-            
-            indiceReseauAMultiplier = len(listeDeReseauxDeNeurones) - 1
+                    
             print("Trouvé !")
             print(cost_moyen_a_tester)
 
-            for _ in range(1, 101) : 
+            for _ in range(1, 10) : 
 
-                structureNeuronaleTemporaire = init_CNN(imagePath, None, listeDeReseauxDeNeurones[indiceReseauAMultiplier].coefficients())
+                indiceReseauAAmeliorer = len(listeDeReseauxDeNeurones) - 1
+                structureNeuronaleTemporaire = init_CNN(imagePath, None, listeDeReseauxDeNeurones[indiceReseauAAmeliorer].coefficients())
                 structureNeuronaleTemporaire.changer_coefs(descente_de_gradient(2, structureNeuronaleTemporaire.coefficients()))
                 listeDeReseauxDeNeurones.append(structureNeuronaleTemporaire)
 
                 cost_moyen_a_tester = calcul_cost_moyen(structureNeuronaleTemporaire.coefficients())
-
+                print(cost_moyen_a_tester)
                 if cost_moyen_a_tester <= cost_moyen_min :
 
                     indiceMin = len(listeDeReseauxDeNeurones) - 1
