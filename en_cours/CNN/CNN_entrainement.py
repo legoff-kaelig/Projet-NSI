@@ -285,16 +285,16 @@ def training(nbTours) :
             cost_moyen_min = cost_moyen_a_tester
             print("Trouvé !!!")
         
-        if cost_moyen_a_tester <= 1.5 :
+        if cost_moyen_a_tester <= 1 :
                     
             print("Trouvé !")
             print(cost_moyen_a_tester)
 
-            for _ in range(1, 10) : 
+            for learningRate in range(1, 10) : 
 
                 indiceReseauAAmeliorer = len(listeDeReseauxDeNeurones) - 1
                 structureNeuronaleTemporaire = init_CNN(imagePath, None, listeDeReseauxDeNeurones[indiceReseauAAmeliorer].coefficients())
-                structureNeuronaleTemporaire.changer_coefs(descente_de_gradient(2, structureNeuronaleTemporaire.coefficients()))
+                structureNeuronaleTemporaire.changer_coefs(descente_de_gradient(7 / learningRate, structureNeuronaleTemporaire.coefficients()))
                 listeDeReseauxDeNeurones.append(structureNeuronaleTemporaire)
 
                 cost_moyen_a_tester = calcul_cost_moyen(structureNeuronaleTemporaire.coefficients())

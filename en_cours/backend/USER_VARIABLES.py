@@ -4,9 +4,10 @@
 
 import FUNCTIONS as func
 
-is_24_hour_format = True
-is_metric_system = True
-setup_wizard_done = True
+is24HourFormat = True
+isMetricSystem = True
+setupWizardDone = True
+refreshRate_minutes = 15
 
 # if is_24_hour_format:
 #     timestamp = func.to_24h(timestamp)
