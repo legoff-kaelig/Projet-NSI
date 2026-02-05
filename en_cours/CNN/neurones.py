@@ -8,7 +8,6 @@ def sigmoid(x):
 
     Sortie : un flottant compris entre 0 et 1
     """
-
     if x >= 0:
 
         return 1 / (1 + math.exp(-x))
@@ -20,7 +19,11 @@ def sigmoid(x):
 
 
 def sigmoid_derivee(x) :
+    """
+    Entrée : <x> un réel
 
+    Sortie : Le nombre dérivé de sigmoid(x)
+    """
     return math.exp(-x) / ((1 + math.exp(-x))**2)
 
 
@@ -42,11 +45,17 @@ def func_de_base_somme(termes) :
 
 
 def convolution(imagePath) :
+    """
+    Entrée :
+        - <imagePath> : Le chemin d'accès vers une image
 
+    Sortie :
+        - <newInputs> : La liste des inputs basés sur l'image en nuance de gris
+    """
     image = open(imagePath)
     largeurImage, hauteurImage = image.size
     imagePxParPxMaisEnGris = []
-    new_inputs = []
+    newInputs = []
 
     for ligne in range(largeurImage) :
 
@@ -58,9 +67,9 @@ def convolution(imagePath) :
 
     for px in imagePxParPxMaisEnGris :
 
-        new_inputs.append(sigmoid(px))
+        newInputs.append(sigmoid(px))
 
-    return new_inputs
+    return newInputs
 
 
 class Neurone :
@@ -83,19 +92,25 @@ class Neurone :
 
 
     def coefs(self) :
-
-        coefsAReturn = []
+        """
+        Sortie :
+            - <coefsARetourner> : La liste des coefficients du neurone
+        """
+        coefsARetourner = []
 
         for coef in self.__coefs :
             
-            coefsAReturn.append(coef)
+            coefsARetourner.append(coef)
 
-        return coefsAReturn
+        return coefsARetourner
     
 
 
     def biais(self) :
-
+        """
+        Sortie :
+            - <biais> : Le biais du neurone
+        """
         return self.__biais
     
 
@@ -150,7 +165,13 @@ class Neurone :
 
 
     def derivee_partielle(self, indiceCoefADeriver, inputsSortie : list) :
+        """
+        Entrée :
+            - <indiceCoefADeriver> : L'indice du coef pour lequel on va dériver partiellement la fonction
+            - <inputs> : La liste des nombres à faire passer dans la fonction dérivée du neurone
 
+        Sortie : La sortie de la fonction dérivée du neurones en fonction du coef
+        """
         assert len(inputsSortie) == len(self.__coefs)
 
         inputsFunc = []
@@ -222,20 +243,24 @@ class ReseauDeNeurones :
 
 
 
-    def changer_inputs(self, new_inputs) :
+    def changer_inputs(self, newInputs) :
         """
-        Entrée : <new_inputs>, la liste des nouveaux inputs à mettre
+        Entrée : <newInputs>, la liste des nouveaux inputs à mettre
 
-        Action : Changement des valeurs de l'attribut <__inputs> pour ceux de <new_inputs>
+        Action : Changement des valeurs de l'attribut <__inputs> pour ceux de <newInputs>
         """
 
-        self.__inputs = new_inputs
+        self.__inputs = newInputs
         self.__sorties = self.sortie_init()
 
     
 
     def changer_inputs_image(self, imagePath) :
+        """
+        Entrée : <imagePath>, le chemin vers l'image pour lequel on en extraira des inputs
 
+        Action : Changement des valeurs de l'attribut <__inputs> pour ceux de convolution(imagePath)
+        """
         self.changer_inputs(convolution(imagePath))
 
 
