@@ -5,12 +5,10 @@ import requests
 import sqlite3
 # from datetime import datetime
 
-import USER_VARIABLES
-import FUNCTIONS as func
-from private.API_KEY import API_KEY
+from API_KEY import API_KEY
 
 locations_path = 'en_cours\\backend\\locations.json'
-DB_PATH = "en_cours\\backend\\weather.sqlite"
+DB_PATH = "en_cours\\backend\\DATABASES\\weather.sqlite"
 
 # Get datas about the user from the JSON files in a DICT
 with open(locations_path, 'r', encoding='utf-8') as file:
@@ -20,25 +18,26 @@ with open(locations_path, 'r', encoding='utf-8') as file:
 latitude = datas[0]["latitude"]
 longitude = datas[0]["longitude"]
 timestamp = datas[0]["timestamp"].split(", ")[1]
+user_id = datas[0].get("user_id", 1)
 
 # API request - Build URL with query parameters
 location = f'{latitude},{longitude}'
 
-fields_filter = [
-    'weatherCode',              # Pour les icônes météo
-    'temperature',              # Température réelle
+fields_filter = [               # INDICATION FRONT END
+    'weatherCode',              # Pour les icônes météo (Image avec les nuages/soleil/... en haut à gauche)
+    'temperature',              # Température réelle ({IN FIRST BLOCK})
     'temperatureApparent',      # Ressenti (Feels like)
-    'precipitationProbability', # Risque de pluie
-    'humidity',                 # Taux d'humidité
-    'uvIndex',                  # Indice UV (Santé/Peau)
-    'windSpeed',                # Vitesse du vent
-    'windGust',                 # Rafales de vent
-    'windDirection',            # Direction du vent
-    'visibility',               # Visibilité (Conduite/Sécurité)
-    'pressureSeaLevel',         # Pression atmosphérique (Baromètre)
-    'rainIntensity',            # Intensité de la pluie (mm/h)
-    'snowIntensity',            # Intensité de la neige
-    'cloudCover',               # Couverture nuageuse (%)
+    'precipitationProbability', # Risque de pluie (Precipitation)
+    'humidity',                 # Taux d'humidité (Humidity)
+    'uvIndex',                  # Indice UV                             NON IMPLEMENTE DANS LE FRONT END 
+    'windSpeed',                # Vitesse du vent (Wind)
+    'windGust',                 # Rafales de vent                       NON IMPLEMENTE DANS LE FRONT END
+    'windDirection',            # Direction du vent                     NON IMPLEMENTE DANS LE FRONT END
+    'visibility',               # Visibilité                            NON IMPLEMENTE DANS LE FRONT END
+    'pressureSeaLevel',         # Pression atmosphérique (Baromètre)    NON IMPLEMENTE DANS LE FRONT END
+    'rainIntensity',            # Intensité de la pluie (mm/h)          NON IMPLEMENTE DANS LE FRONT END
+    'snowIntensity',            # Intensité de la neige                 NON IMPLEMENTE DANS LE FRONT END
+    'cloudCover',               # Couverture nuageuse (%)               NON IMPLEMENTE DANS LE FRONT END
 ]
 
 # Build URL with all parameters
@@ -110,10 +109,9 @@ def create_weather_database(db_path=DB_PATH):
     """)
     
     connection.commit()
-    return connection, cursor
 
 
-def save_weather_data(connection, cursor, data, timestamp):
+def save_weather_data(connection, cursor, data, timestamp, user_id):
     """Save filtered weather data to SQLite database"""
     hourly_timelines = data['timelines']['hourly']
     
@@ -124,6 +122,7 @@ def save_weather_data(connection, cursor, data, timestamp):
         
         # Prepare data for insertion
         row_data = [
+            user_id,
             timestamp,
             weather_time,
             values.get('weatherCode'),
@@ -145,11 +144,11 @@ def save_weather_data(connection, cursor, data, timestamp):
         # Insert into database
         cursor.execute("""
             INSERT INTO weather_forecast 
-            (timestamp, weather_time, weatherCode, temperature, 
+            (user_id, timestamp, weather_time, weatherCode, temperature, 
              temperatureApparent, precipitationProbability, humidity, uvIndex, windSpeed, 
              windGust, windDirection, visibility, pressureSeaLevel, rainIntensity, 
              snowIntensity, cloudCover)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, row_data)
     
     connection.commit()
@@ -162,6 +161,6 @@ weather_data = weather_get(url, params, fields_filter)
 if weather_data:
     # Create database and save data
     connection, cursor = create_weather_database()
-    save_weather_data(connection, cursor, weather_data, timestamp)
+    save_weather_data(connection, cursor, weather_data, timestamp, user_id)
     connection.close()
     print(f'Database saved: {DB_PATH}')

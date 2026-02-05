@@ -1,3 +1,5 @@
 /en_cours/CNN/__pycache__
 /en_cours/backend/__pycache__
-/en_cours/backend/private
+/en_cours/backend/API/__pycache__
+/en_cours/backend/DATABASES/__pycache__
+/en_cours/backend/API/API_KEY.py

@@ -3,18 +3,17 @@ import os
 from datetime import datetime
 
 # Database path
-DB_PATH = os.path.join(os.path.dirname(__file__), 'users.sqlite')
+DB_PATH = "en_cours\\backend\\DATABASES\\users.sqlite"
 
 class UserManager:
     def __init__(self):
         self.db_path = DB_PATH
-        self.init_db()
         self.conn = sqlite3.connect(self.db_path)
         self.cursor = self.conn.cursor()
+        self.init_db()
     
     def init_db(self):
         """Initialize database with users table"""
-        
         self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,12 +31,14 @@ class UserManager:
         """)
 
         self.conn.commit()
-        self.conn.close()
+        # self.conn.close()
     
     def create_user(self, username, email, password_hash, location='', is24HourFormat=True, isMetricSystem=True, setupWizardDone=False, refreshRate_minutes=60):
         """Create a new user"""
-        querry = """SELECT id FROM users WHERE id"""
-        if not querry:
+        query = """SELECT id FROM users WHERE username = ? OR email = ?"""
+        self.cursor.execute(query, (username, email))
+        user_info = self.cursor.fetchall()
+        if not user_info:
             self.cursor.execute("""
                 INSERT INTO users (username, email, password_hash, location, is24HourFormat, isMetricSystem, setupWizardDone, refreshRate_minutes)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -47,12 +48,11 @@ class UserManager:
             self.conn.close()
             return user_id
         else:
-            return None
+            return print("User already exists")
+        
     
     def get_user(self, user_id):
         """Get user by ID"""
-        self.conn = sqlite3.connect(self.db_path)
-        self.cursor = self.conn.cursor()
         self.cursor.execute("""SELECT * FROM users WHERE id = ?""", (user_id,))
         result = self.cursor.fetchone()
         self.conn.close()
@@ -77,11 +77,12 @@ class UserManager:
     
     def delete_user(self, user_id):
         """Delete user by ID"""
-        self.cursor.execute("""DELETE FROM users WHERE id = ?""", (user_id,))
+        self.cursor.execute("""DELETE FROM users WHERE id = ?""", (user_id))
         self.conn.commit()
         success = self.cursor.rowcount > 0
         self.conn.close()
         return success
 
-# Initialize manager
-user_manager = UserManager()
+
+# user = UserManager()
+# user.create_user("kaelig", "kaelig@nsi.fr", "password_hash", location='48, -1.8')
