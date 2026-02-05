@@ -1,4 +1,5 @@
 from random import *
+from PIL.Image import *
 import math
 
 def sigmoid(x):
@@ -23,6 +24,7 @@ def sigmoid_derivee(x) :
     return math.exp(-x) / ((1 + math.exp(-x))**2)
 
 
+
 def func_de_base_somme(termes) :
     """
     Entrée : <termes> une liste de réels
@@ -37,6 +39,28 @@ def func_de_base_somme(termes) :
 
     return resultat
 
+
+
+def convolution(imagePath) :
+
+    image = open(imagePath)
+    largeurImage, hauteurImage = image.size
+    imagePxParPxMaisEnGris = []
+    new_inputs = []
+
+    for ligne in range(largeurImage) :
+
+        for colonne in range(hauteurImage) :
+
+            r,g,b,a = image.getpixel((ligne, colonne))
+            niveauDeGris = (r + g + b) // 3
+            imagePxParPxMaisEnGris.append(niveauDeGris)
+
+    for px in imagePxParPxMaisEnGris :
+
+        new_inputs.append(sigmoid(px))
+
+    return new_inputs
 
 
 class Neurone :
@@ -207,7 +231,13 @@ class ReseauDeNeurones :
 
         self.__inputs = new_inputs
         self.__sorties = self.sortie_init()
+
     
+
+    def changer_inputs_image(self, imagePath) :
+
+        self.changer_inputs(convolution(imagePath))
+
 
 
     def multiplier_coefs(self, new_coefs) :

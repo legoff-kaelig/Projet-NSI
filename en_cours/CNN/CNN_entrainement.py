@@ -75,7 +75,6 @@ def derivee_partielle_cost_moyen(coefficients , indiceCoefADeriver : int, indice
     Sortie :
         - La dérivée partielle du coût moyen en fonction d'un coefficient, c'est à dire les modifications à apporter sur le coefficient permettant de réduire le coût du réseau de neuronnes 
     """
-    reseauxDeNeurones = []
     nbSorties = len(LISTEDESRESULTATSPOSSIBLES)
 
     if coefficients == None :
@@ -88,14 +87,15 @@ def derivee_partielle_cost_moyen(coefficients , indiceCoefADeriver : int, indice
 
     costsDerivesMoy = 0
 
-    for indiceReseau in range(nbSorties) :
+    imagePath = f"{IMAGEDEBUTPATH}{0}{EXTENSIONIMAGE}"
+    reseauDeNeurone = init_CNN(imagePath, baseDeDonnePath, coefficients)
+
+    for indiceReseau in range(0, nbSorties) :
 
         imagePath = f"{IMAGEDEBUTPATH}{indiceReseau}{EXTENSIONIMAGE}"
-        reseauDeNeurone = init_CNN(imagePath, baseDeDonnePath, coefficients)
-        reseauxDeNeurones.append(reseauDeNeurone)
-        resultatVoulu = indiceReseau
-        wantedResults = create_wanted_results(resultatVoulu)
-        costDerive = derivee_partielle_cost(reseauxDeNeurones[indiceReseau], wantedResults, indiceCoefADeriver, indiceNeuroneCoefADeriver, indiceCoucheCoefADeriver)
+        reseauDeNeurone.changer_inputs_image(imagePath)
+        wantedResults = create_wanted_results(indiceReseau)
+        costDerive = derivee_partielle_cost(reseauDeNeurone, wantedResults, indiceCoefADeriver, indiceNeuroneCoefADeriver, indiceCoucheCoefADeriver)
         costsDerivesMoy += costDerive
 
     costsDerivesMoy /= nbSorties
@@ -186,7 +186,6 @@ def calcul_cost_moyen(coefficients = None) :
     Sortie :
         - Le coût moyen de ce modèle pour toutes les sorties possibles par rapport à des datas d'entraînement
     """
-    reseauxDeNeurones = []
     nbSorties = len(LISTEDESRESULTATSPOSSIBLES)
 
     if coefficients == None :
@@ -198,16 +197,17 @@ def calcul_cost_moyen(coefficients = None) :
         baseDeDonnePath = None
 
     costsMoy = 0
+    imagePath = f"{IMAGEDEBUTPATH}{0}{EXTENSIONIMAGE}"
+    reseauDeNeurone = init_CNN(imagePath, baseDeDonnePath, coefficients)
+    
 
-    for indiceReseau in range(nbSorties) :
+    for indiceReseau in range(0, nbSorties) :
 
         imagePath = f"{IMAGEDEBUTPATH}{indiceReseau}{EXTENSIONIMAGE}"
-        reseauDeNeurone = init_CNN(imagePath, baseDeDonnePath, coefficients)
-        reseauxDeNeurones.append(reseauDeNeurone)
-        resultatVoulu = indiceReseau
-        wantedResults = create_wanted_results(resultatVoulu)
-        cost = cost_CNN(reseauxDeNeurones[indiceReseau], wantedResults)
-        costsMoy += cost
+        reseauDeNeurone.changer_inputs_image(imagePath)
+        wantedResults = create_wanted_results(indiceReseau)
+        costTemp = cost_CNN(reseauDeNeurone, wantedResults)
+        costsMoy += costTemp
 
     costsMoy /= nbSorties
 
@@ -344,5 +344,5 @@ def training(nbTours, explore = False) :
 
         nbTours -= 1
 
-training(10000000, False)
+training(10000000, True)
 print(calcul_cost_moyen())
