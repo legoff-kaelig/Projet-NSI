@@ -273,7 +273,7 @@ def training(nbTours, explore = False) :
 
     if  explore :
 
-        for _ in range(1, 1001) :
+        for _ in range(1, 101) :
 
             structureNeuronaleTemporaire = init_CNN(imagePath, BASEDEDONNEEPATH)
             structureNeuronaleTemporaire.changer_coefs_randomly()
@@ -287,8 +287,8 @@ def training(nbTours, explore = False) :
                 cost_moyen_min = cost_moyen_a_tester
                 print("Trouvé !!!")
             
-            if cost_moyen_a_tester <= 0.7 :
-                        
+            if cost_moyen_a_tester <= cost_moyen_min :
+
                 print("Trouvé !")
                 print(cost_moyen_a_tester)
 
@@ -330,5 +330,5 @@ def training(nbTours, explore = False) :
     print(calcul_cost_moyen(),"\n")
     training(nbTours - 1, explore)
 
-training(1000000, True)
+training(10000000, True)
 print(calcul_cost_moyen())
