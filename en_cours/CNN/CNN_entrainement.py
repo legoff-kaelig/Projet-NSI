@@ -7,8 +7,8 @@ from neurones import *
 os.chdir("en_cours/CNN")
 
 IMAGEDEBUTPATH = os.path.join(os.getcwd(),"nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/")
-IMAGEFINPATH = ".png"
-IMAGETESTPATH = IMAGEDEBUTPATH + "test" + IMAGEFINPATH
+EXTENSIONIMAGE = ".png"
+IMAGETESTPATH = IMAGEDEBUTPATH + "test" + EXTENSIONIMAGE
 BASEDEDONNEEPATH = "CNN_base_de_donee.sqli"
 LISTEDESRESULTATSPOSSIBLES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 COEFFICIENTSLISTE = []
@@ -18,7 +18,7 @@ def cost_CNN(reseauDeNeurones : ReseauDeNeurones, wantedResults : list) :
     """
     Entrées :
         - <reseauDeNeurones> : Un réseau de neurones
-        - <wantedResults> : la liste des sorties idéales du réseau de neurones
+        - <wantedResults> : La liste des sorties idéales du réseau de neurones
 
     Sortie :
         - Le coût total du réseau de neurones, c'est à dire l'écart entre l'idéal et la réalité des sorties
@@ -37,8 +37,18 @@ def cost_CNN(reseauDeNeurones : ReseauDeNeurones, wantedResults : list) :
 
 
 
-def derivee_partielle_cost(reseauDeNeurones : ReseauDeNeurones, wantedResults : list, indiceCoefADeriver : int, indiceNeuroneCoefADeriver, indiceCoucheCoefADeriver : int) :
+def derivee_partielle_cost(reseauDeNeurones : ReseauDeNeurones, wantedResults : list, indiceCoefADeriver : int, indiceNeuroneCoefADeriver : int, indiceCoucheCoefADeriver : int) :
+    """
+    Entrées :
+        - <reseauDeNeurones> : Un réseau de neurones
+        - <wantedResults> : La liste des sorties idéales du réseau de neurones
+        - <indiceCoefADeriver> : L'indice du coefficient pour lequel nous allons effectuer la dérivée partielle
+        - <indiceNeuroneCoefADeriver> : L'indice du neurone dans lequel se trouve le coefficient à dériver
+        - <indiceCoucheCoefADeriver> : L'indice de la couche dans laquelle est le neurone dans lequel se trouve le coefficient à dériver
 
+    Sortie :
+        - La dérivée partielle du coût en fonction d'un coefficient, c'est à dire les modifications à apporter sur le coefficient permettant de réduire le coût du réseau de neuronnes 
+    """
     results = reseauDeNeurones.sortie()
     resultsDerivees = reseauDeNeurones.derivee_partielle(indiceCoefADeriver, indiceNeuroneCoefADeriver, indiceCoucheCoefADeriver)
 
@@ -55,7 +65,16 @@ def derivee_partielle_cost(reseauDeNeurones : ReseauDeNeurones, wantedResults : 
 
 
 def derivee_partielle_cost_moyen(coefficients , indiceCoefADeriver : int, indiceNeuroneCoefADeriver : int, indiceCoucheCoefADeriver : int) :
-    
+    """
+    Entrées :
+        - <coefficients> : La liste des coefficients représentant les réseaux de neuronnes
+        - <indiceCoefADeriver> : L'indice du coefficient pour lequel nous allons effectuer la dérivée partielle
+        - <indiceNeuroneCoefADeriver> : L'indice du neurone dans lequel se trouve le coefficient à dériver
+        - <indiceCoucheCoefADeriver> : L'indice de la couche dans laquelle est le neurone dans lequel se trouve le coefficient à dériver
+
+    Sortie :
+        - La dérivée partielle du coût moyen en fonction d'un coefficient, c'est à dire les modifications à apporter sur le coefficient permettant de réduire le coût du réseau de neuronnes 
+    """
     reseauxDeNeurones = []
     nbSorties = len(LISTEDESRESULTATSPOSSIBLES)
 
@@ -71,7 +90,7 @@ def derivee_partielle_cost_moyen(coefficients , indiceCoefADeriver : int, indice
 
     for indiceReseau in range(nbSorties) :
 
-        imagePath = f"{IMAGEDEBUTPATH}{indiceReseau}{IMAGEFINPATH}"
+        imagePath = f"{IMAGEDEBUTPATH}{indiceReseau}{EXTENSIONIMAGE}"
         reseauDeNeurone = init_CNN(imagePath, baseDeDonnePath, coefficients)
         reseauxDeNeurones.append(reseauDeNeurone)
         resultatVoulu = indiceReseau
@@ -86,7 +105,14 @@ def derivee_partielle_cost_moyen(coefficients , indiceCoefADeriver : int, indice
 
 
 def descente_de_gradient(learningRate, coefficients = None) :
+    """
+    Entrées :
+        - <learningRate> : Le taux sur la modification des coefficients (plus il est élevé plus ce sera agressif, plus il est bas, plus ce sera précis)
+        - <coefficients> : La liste des coefficients représentant les réseaux de neuronnes
 
+    Sortie :
+        - Modifie les coefficients permettant de réduire le coût moyen du réseau de neuronnes 
+    """
     imagePath = IMAGETESTPATH
 
     if coefficients == None :
@@ -175,7 +201,7 @@ def calcul_cost_moyen(coefficients = None) :
 
     for indiceReseau in range(nbSorties) :
 
-        imagePath = f"{IMAGEDEBUTPATH}{indiceReseau}{IMAGEFINPATH}"
+        imagePath = f"{IMAGEDEBUTPATH}{indiceReseau}{EXTENSIONIMAGE}"
         reseauDeNeurone = init_CNN(imagePath, baseDeDonnePath, coefficients)
         reseauxDeNeurones.append(reseauDeNeurone)
         resultatVoulu = indiceReseau
@@ -231,24 +257,6 @@ def sauvegarde_coefficients(listeDesCoefficients, listeDesBiais = [[0,0,0,0,0,0,
 
 
 
-def calcul_cost_moyen_liste_de_reseaux(listeDeReseauxDeNeurones):
-
-    indiceMin = 0
-    cost_moyen_min = calcul_cost_moyen(listeDeReseauxDeNeurones[indiceMin].coefficients())
-
-    for structureNeuronaleIndice in range(1, len(listeDeReseauxDeNeurones)) :
-        
-        cost_moyen_a_tester = calcul_cost_moyen(listeDeReseauxDeNeurones[structureNeuronaleIndice].coefficients())
-
-        if cost_moyen_a_tester <= cost_moyen_min :
-
-            indiceMin = structureNeuronaleIndice
-            cost_moyen_min = cost_moyen_a_tester
-
-    return listeDeReseauxDeNeurones[indiceMin].coefficients()
-
-
-
 def training(nbTours, explore = False) :
     """
     Entrée :
@@ -258,84 +266,83 @@ def training(nbTours, explore = False) :
         - Créer plusieurs variantes du réseau de neurones principal
         - Sauvegarder le plus efficient par rapport à son coût moyen
     """
-    if nbTours <= 0 :
-
-        return
+    while nbTours >= 0 :
     
-    print(nbTours,":")
+        print(nbTours,":")
 
-    imagePath = IMAGEDEBUTPATH + "1" + IMAGEFINPATH
-    listeDeReseauxDeNeurones = []
-    listeDeReseauxDeNeurones.append(init_CNN(imagePath, BASEDEDONNEEPATH))
+        imagePath = IMAGEDEBUTPATH + "1" + EXTENSIONIMAGE
+        listeDeReseauxDeNeurones = []
+        listeDeReseauxDeNeurones.append(init_CNN(imagePath, BASEDEDONNEEPATH))
 
-    indiceMin = 0
-    cost_moyen_min = calcul_cost_moyen(listeDeReseauxDeNeurones[indiceMin].coefficients())
+        indiceMin = 0
+        cost_moyen_min = calcul_cost_moyen(listeDeReseauxDeNeurones[indiceMin].coefficients())
 
-    if  explore :
+        if  explore :
 
-        for _ in range(1, 101) :
+            for _ in range(1, 101) :
 
-            structureNeuronaleTemporaire = init_CNN(imagePath, BASEDEDONNEEPATH)
-            structureNeuronaleTemporaire.changer_coefs_randomly()
-            listeDeReseauxDeNeurones.append(structureNeuronaleTemporaire)
+                structureNeuronaleTemporaire = init_CNN(imagePath, BASEDEDONNEEPATH)
+                structureNeuronaleTemporaire.changer_coefs_randomly()
+                listeDeReseauxDeNeurones.append(structureNeuronaleTemporaire)
 
-            cost_moyen_a_tester = calcul_cost_moyen(structureNeuronaleTemporaire.coefficients())
+                cost_moyen_a_tester = calcul_cost_moyen(structureNeuronaleTemporaire.coefficients())
 
-            if cost_moyen_a_tester <= cost_moyen_min :
+                if cost_moyen_a_tester <= cost_moyen_min :
 
-                indiceMin = len(listeDeReseauxDeNeurones) - 1
-                cost_moyen_min = cost_moyen_a_tester
-                print("Trouvé !!!")
-            
-            if cost_moyen_a_tester <= cost_moyen_min :
+                    indiceMin = len(listeDeReseauxDeNeurones) - 1
+                    cost_moyen_min = cost_moyen_a_tester
+                    print("Trouvé !!!")
+                
+                if cost_moyen_a_tester <= cost_moyen_min :
 
-                print("Trouvé !")
-                print(cost_moyen_a_tester)
-
-                for learningRate in range(1, 10) : 
-
-                    indiceReseauAAmeliorer = len(listeDeReseauxDeNeurones) - 1
-                    structureNeuronaleTemporaire = init_CNN(imagePath, None, listeDeReseauxDeNeurones[indiceReseauAAmeliorer].coefficients())
-                    structureNeuronaleTemporaire.changer_coefs(descente_de_gradient(20 / learningRate, structureNeuronaleTemporaire.coefficients()))
-                    listeDeReseauxDeNeurones.append(structureNeuronaleTemporaire)
-
-                    cost_moyen_a_tester = calcul_cost_moyen(structureNeuronaleTemporaire.coefficients())
+                    print("Trouvé !")
                     print(cost_moyen_a_tester)
-                    if cost_moyen_a_tester <= cost_moyen_min :
 
-                        indiceMin = len(listeDeReseauxDeNeurones) - 1
-                        cost_moyen_min = cost_moyen_a_tester
-                        print("Trouvé !!!")
+                    for learningRate in range(1, 10) : 
 
-    else :
+                        indiceReseauAAmeliorer = len(listeDeReseauxDeNeurones) - 1
+                        structureNeuronaleTemporaire = init_CNN(imagePath, None, listeDeReseauxDeNeurones[indiceReseauAAmeliorer].coefficients())
+                        structureNeuronaleTemporaire.changer_coefs(descente_de_gradient(20 / learningRate, structureNeuronaleTemporaire.coefficients()))
+                        listeDeReseauxDeNeurones.append(structureNeuronaleTemporaire)
 
-        for learningRate in range(1, 10) : 
+                        cost_moyen_a_tester = calcul_cost_moyen(structureNeuronaleTemporaire.coefficients())
+                        print(cost_moyen_a_tester)
+                        if cost_moyen_a_tester <= cost_moyen_min :
 
-            indiceReseauAAmeliorer = len(listeDeReseauxDeNeurones) - 1
-            structureNeuronaleTemporaire = init_CNN(imagePath, None, listeDeReseauxDeNeurones[indiceReseauAAmeliorer].coefficients())
-            structureNeuronaleTemporaire.changer_coefs(descente_de_gradient(20 / learningRate, structureNeuronaleTemporaire.coefficients()))
-            listeDeReseauxDeNeurones.append(structureNeuronaleTemporaire)
+                            indiceMin = len(listeDeReseauxDeNeurones) - 1
+                            cost_moyen_min = cost_moyen_a_tester
+                            print("Trouvé !!!")
 
-            cost_moyen_a_tester = calcul_cost_moyen(structureNeuronaleTemporaire.coefficients())
-            print(cost_moyen_a_tester)
-            if cost_moyen_a_tester <= cost_moyen_min :
+        else :
 
-                indiceMin = len(listeDeReseauxDeNeurones) - 1
-                cost_moyen_min = cost_moyen_a_tester
-                print("Trouvé !!!")
+            for learningRate in range(1, 10) : 
+
+                indiceReseauAAmeliorer = len(listeDeReseauxDeNeurones) - 1
+                structureNeuronaleTemporaire = init_CNN(imagePath, None, listeDeReseauxDeNeurones[indiceReseauAAmeliorer].coefficients())
+                structureNeuronaleTemporaire.changer_coefs(descente_de_gradient(5 / learningRate, structureNeuronaleTemporaire.coefficients()))
+                listeDeReseauxDeNeurones.append(structureNeuronaleTemporaire)
+
+                cost_moyen_a_tester = calcul_cost_moyen(structureNeuronaleTemporaire.coefficients())
+                print(cost_moyen_a_tester)
+                if cost_moyen_a_tester <= cost_moyen_min :
+
+                    indiceMin = len(listeDeReseauxDeNeurones) - 1
+                    cost_moyen_min = cost_moyen_a_tester
+                    print("Trouvé !!!")
 
 
-    sauvegarde_coefficients(listeDeReseauxDeNeurones[indiceMin].coefficients())
+        sauvegarde_coefficients(listeDeReseauxDeNeurones[indiceMin].coefficients())
 
-    imagePath = 0
-    listeDeReseauxDeNeurones = []
-    cost_moyen_a_tester = 0
-    indiceMin = 0
-    cost_moyen_min = 0
-    structureNeuronaleTemporaire = 0
+        imagePath = 0
+        listeDeReseauxDeNeurones = []
+        cost_moyen_a_tester = 0
+        indiceMin = 0
+        cost_moyen_min = 0
+        structureNeuronaleTemporaire = 0
 
-    print(calcul_cost_moyen(),"\n")
-    training(nbTours - 1, explore)
+        print(calcul_cost_moyen(),"\n")
 
-training(10000000, True)
+        nbTours -= 1
+
+training(10000000, False)
 print(calcul_cost_moyen())
