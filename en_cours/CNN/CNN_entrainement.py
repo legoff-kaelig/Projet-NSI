@@ -327,6 +327,13 @@ def training(nbTours, explore = False) :
 
     sauvegarde_coefficients(listeDeReseauxDeNeurones[indiceMin].coefficients())
 
+    imagePath = 0
+    listeDeReseauxDeNeurones = []
+    cost_moyen_a_tester = 0
+    indiceMin = 0
+    cost_moyen_min = 0
+    structureNeuronaleTemporaire = 0
+
     print(calcul_cost_moyen(),"\n")
     training(nbTours - 1, explore)
 
