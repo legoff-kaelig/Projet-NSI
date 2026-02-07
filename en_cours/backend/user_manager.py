@@ -1,6 +1,4 @@
 import sqlite3
-import os
-from datetime import datetime
 
 # Database path
 DB_PATH = "en_cours\\backend\\DATABASES\\users.sqlite"
@@ -11,6 +9,18 @@ class UserManager:
         self.conn = sqlite3.connect(self.db_path)
         self.cursor = self.conn.cursor()
         self.init_db()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        self.close()
+
+    def close(self):
+        if self.conn is not None:
+            self.conn.close()
+            self.conn = None
+            self.cursor = None
     
     def init_db(self):
         """Initialize database with users table"""
@@ -21,6 +31,7 @@ class UserManager:
                 email TEXT UNIQUE NOT NULL,
                 password_hash TEXT NOT NULL,
                 location TEXT,
+                city TEXT,
                 is24HourFormat BOOL DEFAULT 1,
                 isMetricSystem BOOL DEFAULT 1,
                 setupWizardDone BOOL DEFAULT 0,
@@ -45,34 +56,89 @@ class UserManager:
             """, (username, email, password_hash, location, is24HourFormat, isMetricSystem, setupWizardDone, refreshRate_minutes))
             self.conn.commit()
             user_id = self.cursor.lastrowid
-            self.conn.close()
             return user_id
         else:
-            return print("User already exists")
+            return None
         
     
     def get_user(self, user_id):
         """Get user by ID"""
-        self.cursor.execute("""SELECT * FROM users WHERE id = ?""", (user_id,))
+        self.cursor.execute(
+            """
+                SELECT
+                    id,
+                    username,
+                    email,
+                    password_hash,
+                    location,
+                    is24HourFormat,
+                    isMetricSystem,
+                    setupWizardDone,
+                    refreshRate_minutes,
+                    city
+                FROM users
+                WHERE id = ?
+            """,
+            (user_id,),
+        )
         result = self.cursor.fetchone()
-        self.conn.close()
         return result
     
-    def update_user(self, user_id, **kwargs):
-        """Update user fields"""
-        allowed_fields = ['username', 'email', 'location', 'is24HourFormat', 'isMetricSystem', 'setupWizardDone', 'refreshRate_minutes']
-        updates = {k: v for k, v in kwargs.items() if k in allowed_fields}
+    def update_user(
+        self,
+        user_id,
+        username=None,
+        email=None,
+        location=None,
+        is24HourFormat=None,
+        isMetricSystem=None,
+        setupWizardDone=None,
+        refreshRate_minutes=None,
+        city=None,
+    ):
+        """Update user fields (pass only values to change)"""
+        updates = {
+            'username': username,
+            'email': email,
+            'location': location,
+            'is24HourFormat': is24HourFormat,
+            'isMetricSystem': isMetricSystem,
+            'setupWizardDone': setupWizardDone,
+            'refreshRate_minutes': refreshRate_minutes,
+            'city': city,
+        }
+        filtered_updates = {}
+        for key, value in updates.items():
+            if value is not None:
+                filtered_updates[key] = value
+        updates = filtered_updates
         
         if not updates:
             return False
         
-        set_clause = ', '.join([f'{k} = ?' for k in updates.keys()])
+        set_parts = []
+        for key in updates.keys():
+            set_parts.append(f'{key} = ?')
+        set_clause = ', '.join(set_parts)
         values = list(updates.values()) + [user_id]
         
         self.cursor.execute(f"""UPDATE users SET {set_clause}, updated_at = CURRENT_TIMESTAMP WHERE id = ?""", values)
         self.conn.commit()
         success = self.cursor.rowcount > 0
-        self.conn.close()
+        return success
+
+    def update_user_city(self, user_id, city):
+        """Update the user's city (can be None)"""
+        self.cursor.execute(
+            """
+                UPDATE users
+                SET city = ?, updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+            """,
+            (city, user_id),
+        )
+        self.conn.commit()
+        success = self.cursor.rowcount > 0
         return success
     
     def delete_user(self, user_id):
@@ -80,7 +146,6 @@ class UserManager:
         self.cursor.execute("""DELETE FROM users WHERE id = ?""", (user_id))
         self.conn.commit()
         success = self.cursor.rowcount > 0
-        self.conn.close()
         return success
 
 
