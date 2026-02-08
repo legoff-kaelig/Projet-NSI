@@ -138,8 +138,6 @@ def descente_de_gradient(learningRate, coefficients = None) :
 
         for indiceNeurone in range(len(coefficients[couche])) :
 
-            print(" -",indiceNeurone)
-
             nouveauxCoefficients[couche].append([])
 
             for indiceCoef in range(len(coefficients[couche][indiceNeurone])) :
@@ -302,7 +300,7 @@ def training(nbTours, explore = False) :
 
                         indiceReseauAAmeliorer = len(listeDeReseauxDeNeurones) - 1
                         structureNeuronaleTemporaire = init_CNN(imagePath, None, listeDeReseauxDeNeurones[indiceReseauAAmeliorer].coefficients())
-                        structureNeuronaleTemporaire.changer_coefs(descente_de_gradient(20 / learningRate, structureNeuronaleTemporaire.coefficients()))
+                        structureNeuronaleTemporaire.changer_coefs(descente_de_gradient(5 / learningRate, structureNeuronaleTemporaire.coefficients()))
                         listeDeReseauxDeNeurones.append(structureNeuronaleTemporaire)
 
                         cost_moyen_a_tester = calcul_cost_moyen(structureNeuronaleTemporaire.coefficients())
@@ -344,5 +342,5 @@ def training(nbTours, explore = False) :
 
         nbTours -= 1
 
-training(10000000, True)
+training(10000000, False)
 print(calcul_cost_moyen())
