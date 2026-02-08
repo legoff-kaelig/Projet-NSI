@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Backend Request Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Space+Grotesk:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Local API Console</p>
+          <h1>Backend request runner</h1>
+          <p class="subtitle">
+            Send JSON requests to the Python auth server and inspect the
+            responses.
+          </p>
+        </div>
+        <div class="endpoint">
+          <label for="baseUrl">Endpoint</label>
+          <input
+            id="baseUrl"
+            type="url"
+            value="http://127.0.0.1:8000/auth"
+          />
+          <p class="hint">
+            If the browser blocks requests, add CORS headers to the backend or
+            serve this page from the same origin.
+          </p>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="card">
+          <h2>Create user</h2>
+          <form id="createForm" class="form">
+            <label>
+              Username
+              <input name="username" type="text" required placeholder="demo" />
+            </label>
+            <label>
+              Email
+              <input
+                name="email"
+                type="email"
+                required
+                placeholder="demo@example.com"
+              />
+            </label>
+            <label>
+              Password hash
+              <input name="password_hash" type="text" required />
+            </label>
+            <button type="submit">Send create_user</button>
+          </form>
+        </section>
+
+        <section class="card">
+          <h2>Update settings</h2>
+          <form id="settingsForm" class="form">
+            <label>
+              User id
+              <input name="user_id" type="number" min="1" required />
+            </label>
+            <label>
+              Password hash
+              <input name="password_hash" type="text" required />
+            </label>
+            <label>
+              Username (optional)
+              <input name="username" type="text" />
+            </label>
+            <label>
+              Email (optional)
+              <input name="email" type="email" />
+            </label>
+            <label>
+              Location (lat,lon)
+              <input name="location" type="text" placeholder="48.2738,-1.858" />
+            </label>
+            <label>
+              City
+              <input name="city" type="text" />
+            </label>
+            <label>
+              Refresh rate (minutes)
+              <input name="refreshRate_minutes" type="number" min="1" />
+            </label>
+            <label>
+              24h format
+              <select name="is24HourFormat">
+                <option value="">Unchanged</option>
+                <option value="true">True</option>
+                <option value="false">False</option>
+              </select>
+            </label>
+            <label>
+              Metric system
+              <select name="isMetricSystem">
+                <option value="">Unchanged</option>
+                <option value="true">True</option>
+                <option value="false">False</option>
+              </select>
+            </label>
+            <label>
+              Setup wizard done
+              <select name="setupWizardDone">
+                <option value="">Unchanged</option>
+                <option value="true">True</option>
+                <option value="false">False</option>
+              </select>
+            </label>
+            <button type="submit">Send update_settings</button>
+          </form>
+        </section>
+
+        <section class="card">
+          <h2>Update weather</h2>
+          <form id="weatherForm" class="form">
+            <label>
+              User id
+              <input name="user_id" type="number" min="1" required />
+            </label>
+            <label>
+              Password hash
+              <input name="password_hash" type="text" required />
+            </label>
+            <label>
+              Location (lat,lon)
+              <input name="location" type="text" placeholder="48.2738,-1.858" />
+            </label>
+            <label>
+              Timestamp
+              <div class="inline">
+                <input name="timestamp" type="text" required />
+                <button type="button" id="nowButton">Now</button>
+              </div>
+            </label>
+            <button type="submit">Send update_weather</button>
+          </form>
+        </section>
+      </main>
+
+      <section class="output">
+        <div class="output-head">
+          <h2>Response</h2>
+          <div class="output-actions">
+            <button type="button" id="clearOutput">Clear</button>
+          </div>
+        </div>
+        <pre id="output" class="output-body">Waiting for a request.</pre>
+      </section>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
