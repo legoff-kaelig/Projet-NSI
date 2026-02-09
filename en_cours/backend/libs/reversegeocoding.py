@@ -5,24 +5,21 @@ class ReverseGeocoding:
     """Reverse-geocoding a latitude/longitude pair using a SQLite DB."""
 
     def __init__(self, lat: str, lon: str, db_path: str = "villes_france.sqlite", table_name: str = "villes_france_free"):
-        # Normalize inputs to avoid whitespace mismatches in SQL LIKE.
+        # Normalize inputs to avoid whitespace mismatches in SQL LIKE queries
         self.lat = lat.strip()
         self.lon = lon.strip()
         self.table_name = table_name
-
-        assert self._is_numeric(self.lat), "Latitude must be numeric"
-        assert self._is_numeric(self.lon), "Longitude must be numeric"
 
         if not os.path.isabs(db_path):
             base_dir = os.path.dirname(__file__)
             db_path = os.path.join(base_dir, db_path)
 
-        # Open a dedicated connection for this instance.
+        # Connects the DB and sets a cursor
         self.con = sqlite3.connect(db_path)
         self.cur = self.con.cursor()
 
     def _query_best(self, lat_prefix: str, lon_prefix: str) -> str | None:
-        # Use prefix filtering then choose the closest numeric match.
+        """Returns the name of the closest matching city based on latitude and longitude prefixes, or None if no match is found"""
         request = f"""
             SELECT ville_nom
             FROM (
@@ -42,7 +39,7 @@ class ReverseGeocoding:
 
     def find_city(self) -> str | None:
         """Return the first matching city name, or None if nothing is found."""
-        # Gradually shorten prefixes until a match is found.
+        # Gradually shorten prefixes until a match is found
         max_trim = min(len(self.lat), len(self.lon))
         for step in range(0, max_trim):
             if step > 0:
@@ -60,7 +57,7 @@ class ReverseGeocoding:
     
     def close_connection(self):
         """Close the database connection."""
-        # Idempotent cleanup for caller convenience.
+        # Cleanup for caller convenience
         if self.con is not None:
             self.con.close()
             self.con = None
@@ -74,10 +71,8 @@ def _test():
 
     request = ReverseGeocoding(latitude, longitude)
     city = request.find_city()
+    assert city is not None
     request.close_connection()
-
-    assert city is None or isinstance(city, str)
-
 
 if __name__ == "__main__":
     if os.path.exists(os.path.join(os.path.dirname(__file__), "villes_france.sqlite")):

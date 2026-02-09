@@ -19,7 +19,7 @@ from user_manager import UserManager
 
 DB_PATH = "en_cours\\backend\\DATABASES\\weather.sqlite"
 
-fields_filter = [               # INDICATION FRONT END
+fields_filter = [               #                       INDICATION FRONT END
     'weatherCode',              # Pour les icônes météo (Image avec les nuages/soleil/... en haut à gauche)
     'temperature',              # Température réelle ({IN FIRST BLOCK})
     'temperatureApparent',      # Ressenti (Feels like)
@@ -72,6 +72,7 @@ def weather_get(url, params, fields_filter):
     # Get API response
     response = requests.get(url, params)
 
+    # Check is the response is successful
     if response.status_code != 200:
         print(f'Error: {response.status_code} - {response.content}')
         return None
@@ -82,7 +83,7 @@ def weather_get(url, params, fields_filter):
     hourly_timelines = data['timelines']['hourly']
     
     for timeline in hourly_timelines:
-        # Get all the weather values for an hour
+        # Get all the weather values for an hour, !! because the backend currently doesn't support weekly forcasts !!
         all_values = timeline['values']
         
         # Create a dictionary with the fields in the list fields_filter
@@ -108,11 +109,11 @@ def aqi_get(url, params):
 
 def create_weather_database(db_path=DB_PATH):
     """Create SQLite database and table for weather data"""
-    # Connect to database (creates it if it doesn't exist)
+    # Connects the DB and sets a cursor
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
     
-    # Create table for weather forecasts
+    # Create table for weather forecasts if it doesn't exist
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS weather_forecast (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -144,11 +145,11 @@ def create_weather_database(db_path=DB_PATH):
 
 
 def _get_last_update_time(user_id, db_path=DB_PATH):
-    if not os.path.exists(db_path):
-        return None
-
+    # Connects the DB and sets a cursor
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
+
+    # Check if the weather_forecast table exists in the DB
     cursor.execute(
         """
             SELECT name
