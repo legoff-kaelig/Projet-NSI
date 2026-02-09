@@ -1,0 +1,91 @@
+/* Structure globale identique */
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 120px;
+}
+
+/* Carte centrale */
+.scan-card {
+  width: 90%;
+  max-width: 360px;
+  padding: 1.5em;
+}
+
+/* Contenu interne */
+.scan-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2em;
+  text-align: center;
+}
+
+.scan-content h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* Zone de drop */
+#drop-zone {
+  border: 1.5px dashed rgba(255,255,255,0.6);
+  border-radius: 18px;
+  padding: 1.5em 1em;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+#drop-zone p {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+#drop-zone.dragover {
+  background: rgba(255,255,255,0.08);
+  border-color: white;
+}
+
+/* Preview */
+#preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  align-items: center;
+}
+
+#preview-image {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+/* Bouton */
+#validate-btn {
+  padding: 0.6em 1.6em;
+  border-radius: 999px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* Navbar identique */
+.bottom-nav {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  padding: 0.5em 1.5em;
+}
+
+.bottom-nav .content {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 1.3rem;
+}
+
+.hidden {
+  display: none;
+}

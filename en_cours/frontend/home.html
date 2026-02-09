@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+    <title>Trophées NSI - Projet V1</title>
+</head>
+<body>
+    <!-- Barre de navigation entre cette page-ci et deux nouvelles qui seront crées par la suite -->
+    <div class="bottom-nav-wrapper">
+        <nav class="liquid-glass bottom-nav">
+            <a href="home.html" class="nav-item active">
+                <img src="assets/img/home.svg" alt="Home">
+            </a>
+
+            <a href="#" class="nav-item">
+                <img src="assets/img/scan.svg" alt="Scan">
+            </a>
+
+            <a href="#" class="nav-item disabled">
+                <img src="assets/img/settings.svg" alt="Settings">
+            </a>
+        </nav>
+    </div>
+
+    <p>Bienvenue,</p>
+    <span>Jules</span>
+    <span id="city">Rennes</span>
+
+    <!-- Trois sections principales : la première avec les informations générales, la deuxième avec les détails et la troisième avec la qualité de l'air -->
+    <div class="liquid-glass" style="height: 7em;">
+        <div class="content">
+            <div class="weather-main">
+                <div class="text-group">
+                    <span id="date">12 Février 2026</span>
+                    <span id="statut">Pluie</span>
+                    <span id="temp">12°C</span>
+                </div>
+                <img src="assets/img/partly_cloudy.svg" alt="" id="modifiable-img">
+            </div>
+        </div>
+    </div>
+    <div class="liquid-glass" style="height: 5em;">
+        <div class="content" style="display: flex; justify-content: space-between;">
+            <div id="temperature">
+                <img src="assets/img/thermometer-sun.svg" alt="" class="icons">
+                <span>10°C</span>
+                <p>Ressenti</p>
+            </div>
+            <div id="precipitations">
+                <img src="assets/img/cloud-sun-rain.svg" alt="" class="icons">
+                <span>42%</span>
+                <p>Precipitations</p>
+            </div>
+            <div id="wind">
+                <img src="assets/img/wind.svg" alt="" class="icons">
+                <span>25km/h</span>
+                <p>Vent</p>
+            </div>
+            <div id="humidity">
+                <img src="assets/img/droplets.svg" alt="" class="icons">
+                <span>95%</span>
+                <p>Humidité</p>
+            </div>
+        </div>
+    </div>
+    <div class="liquid-glass" style="height: 3em;">
+        <div id="air">
+            <p>Qualité de l'air</p>
+            <button title="INFO"><img src="assets/img/info.svg" alt=""></button>
+            <div id="quality"><div id="movable"></div></div>
+        </div>
+    </div>
+    
+    <!-- Importé depuis un site web générateur de widget "liquid glass" -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <defs>
+            <filter id="glass-distortion" x="0%" y="0%" width="100%" height="100%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.008 0.008" numOctaves="2" seed="92" result="noise" />
+            <feGaussianBlur in="noise" stdDeviation="2" result="blurred" />
+            <feDisplacementMap in="SourceGraphic" in2="blurred" scale="77" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
+</body>
+</html>
