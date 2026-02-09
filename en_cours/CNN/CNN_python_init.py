@@ -106,7 +106,7 @@ def init_CNN(imagePath, baseDeDoneePath = None, coefficients = None) :
 
     if baseDeDonneeEnArgument :
 
-        for neurone in range(13) :
+        for neurone in range(10) :
 
             coefficients[1].append([])
             
@@ -133,9 +133,6 @@ def init_CNN(imagePath, baseDeDoneePath = None, coefficients = None) :
     neuroneCouche2Numero8 = Neurone(coefficients[1][7])
     neuroneCouche2Numero9 = Neurone(coefficients[1][8])
     neuroneCouche2Numero10 = Neurone(coefficients[1][9])
-    neuroneCouche2Numero11 = Neurone(coefficients[1][10])
-    neuroneCouche2Numero12 = Neurone(coefficients[1][11])
-    neuroneCouche2Numero13 = Neurone(coefficients[1][12])
 
     structureNeuronale[2] = [neuroneCouche2Numero1, 
                             neuroneCouche2Numero2, 
@@ -146,10 +143,7 @@ def init_CNN(imagePath, baseDeDoneePath = None, coefficients = None) :
                             neuroneCouche2Numero7, 
                             neuroneCouche2Numero8, 
                             neuroneCouche2Numero9, 
-                            neuroneCouche2Numero10, 
-                            neuroneCouche2Numero11, 
-                            neuroneCouche2Numero12, 
-                            neuroneCouche2Numero13]
+                            neuroneCouche2Numero10]
 
     #########################################################################
 
@@ -157,7 +151,7 @@ def init_CNN(imagePath, baseDeDoneePath = None, coefficients = None) :
 
     if baseDeDonneeEnArgument :
 
-        for neurone in range(10) :
+        for neurone in range(2) :
 
             coefficients[2].append([])
             
@@ -176,25 +170,9 @@ def init_CNN(imagePath, baseDeDoneePath = None, coefficients = None) :
 
     neuroneCouche3Numero1 = Neurone(coefficients[2][0])
     neuroneCouche3Numero2 = Neurone(coefficients[2][1])
-    neuroneCouche3Numero3 = Neurone(coefficients[2][2])
-    neuroneCouche3Numero4 = Neurone(coefficients[2][3])
-    neuroneCouche3Numero5 = Neurone(coefficients[2][4])
-    neuroneCouche3Numero6 = Neurone(coefficients[2][5])
-    neuroneCouche3Numero7 = Neurone(coefficients[2][6])
-    neuroneCouche3Numero8 = Neurone(coefficients[2][7])
-    neuroneCouche3Numero9 = Neurone(coefficients[2][8])
-    neuroneCouche3Numero10 = Neurone(coefficients[2][9])
 
     structureNeuronale[3] = [neuroneCouche3Numero1, 
-                            neuroneCouche3Numero2, 
-                            neuroneCouche3Numero3, 
-                            neuroneCouche3Numero4, 
-                            neuroneCouche3Numero5, 
-                            neuroneCouche3Numero6, 
-                            neuroneCouche3Numero7, 
-                            neuroneCouche3Numero8, 
-                            neuroneCouche3Numero9, 
-                            neuroneCouche3Numero10]
+                            neuroneCouche3Numero2]
 
     #########################################################################
 

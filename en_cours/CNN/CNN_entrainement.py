@@ -6,11 +6,11 @@ from neurones import *
 
 os.chdir("en_cours/CNN")
 
-IMAGEDEBUTPATH = os.path.join(os.getcwd(),"nombres écrits à la main pour entrainer un modèle basique de reconnaissance d'image/")
-EXTENSIONIMAGE = ".png"
+IMAGEDEBUTPATH = os.path.join(os.getcwd(),"champis images/")
+EXTENSIONIMAGE = ".jpg"
 IMAGETESTPATH = IMAGEDEBUTPATH + "test" + EXTENSIONIMAGE
 BASEDEDONNEEPATH = "CNN_base_de_donee.sqli"
-LISTEDESRESULTATSPOSSIBLES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+LISTEDESRESULTATSPOSSIBLES = [0, 1]
 COEFFICIENTSLISTE = []
 
 
@@ -213,7 +213,7 @@ def calcul_cost_moyen(coefficients = None) :
 
 
 
-def sauvegarde_coefficients(listeDesCoefficients, listeDesBiais = [[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]]) :
+def sauvegarde_coefficients(listeDesCoefficients, listeDesBiais = [[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0]]) :
     """
     Entrées : 
         - <listeDesCoefficients> : La liste des coefficients du réseau à sauvegarder

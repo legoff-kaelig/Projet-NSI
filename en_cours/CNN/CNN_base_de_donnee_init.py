@@ -6,12 +6,12 @@ from PIL.Image import *
 os.chdir("en_cours/CNN")
 
 structureNeuronale = [[[],[],[],[],[],[],[],[],[],[],[],[],[]],
-                       [[],[],[],[],[],[],[],[],[],[],[],[],[]],
-                       [[],[],[],[],[],[],[],[],[],[]]]
+                       [[],[],[],[],[],[],[],[],[],[]],
+                       [[],[]]]
 nbCouches = len(structureNeuronale)
 
-largeurImage = 40
-hauteurImage = 40
+largeurImage = 400
+hauteurImage = 600
 
 con = sqlite3.connect("CNN_base_de_donee.sqli")
 cur=con.cursor()
