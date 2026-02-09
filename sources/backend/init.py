@@ -3,6 +3,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from API.weather_data import update_weather_for_user
 from user_manager import UserManager
+from datetime import datetime
 
 HOST = "127.0.0.1"
 PORT = 8000
@@ -16,19 +17,29 @@ def _read_json_body(handler):
     body_text = raw_body.decode("utf-8", errors="replace")
     if not body_text:
         return {}
-    return json.loads(body_text)
+    try:
+        return json.loads(body_text)
+    except json.JSONDecodeError:
+        return None
 
 
-def _send_json(handler, status_code, payload):
-    body = json.dumps(payload).encode("utf-8")
-    handler.send_response(status_code)
-    handler.send_header("Access-Control-Allow-Origin", "*")
-    handler.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
-    handler.send_header("Access-Control-Allow-Headers", "Content-Type")
-    handler.send_header("Content-Type", "application/json; charset=utf-8")
-    handler.send_header("Content-Length", str(len(body)))
-    handler.end_headers()
-    handler.wfile.write(body)
+def _send_json(handler, status, payload):
+    try:
+        body = json.dumps(payload).encode("utf-8")
+
+        handler.send_response(status)
+        handler.send_header("Content-Type", "application/json")
+        handler.send_header("Content-Length", str(len(body)))
+
+        handler.send_header("Access-Control-Allow-Origin", "*")
+        handler.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+        handler.send_header("Access-Control-Allow-Headers", "Content-Type")
+
+        handler.end_headers()
+        handler.wfile.write(body)
+
+    except (ConnectionAbortedError, BrokenPipeError):
+        print("⚠️ Client disconnected before response was sent")
 
 
 def _parse_location(data):
@@ -37,9 +48,12 @@ def _parse_location(data):
 
     location = data.get("location")
     if location and (latitude is None or longitude is None):
-        lat_text, lon_text = location.split(",", 1)
-        latitude = float(lat_text.strip())
-        longitude = float(lon_text.strip())
+        try:
+            lat_text, lon_text = location.split(",", 1)
+            latitude = float(lat_text.strip())
+            longitude = float(lon_text.strip())
+        except ValueError:
+            return None, None
 
     return latitude, longitude
 
@@ -89,9 +103,8 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
             username = data.get("username")
             email = data.get("email")
             password_hash = data.get("password_hash")
-            manager = UserManager()
-            new_user_id = manager.create_user(username, email, password_hash)
-            manager.close()
+            with UserManager() as manager:
+                new_user_id = manager.create_user(username, email, password_hash)
             if not new_user_id:
                 _send_json(
                     self,
@@ -100,9 +113,8 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
                 )
                 return
 
-            manager = UserManager()
-            user = manager.get_user(new_user_id)
-            manager.close()
+            with UserManager() as manager:
+                user = manager.get_user(new_user_id)
             _send_json(
                 self,
                 201,
@@ -117,9 +129,8 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
 
         user_id = data.get("user_id")
         password_hash = data.get("password_hash")
-        manager = UserManager()
-        user = manager.get_user(user_id)
-        manager.close()
+        with UserManager() as manager:
+            user = manager.get_user(user_id)
         if not user:
             _send_json(
                 self,
@@ -161,9 +172,8 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
                 )
                 return
 
-            manager = UserManager()
-            updated = manager.update_user(user_id, **updates)
-            manager.close()
+            with UserManager() as manager:
+                updated = manager.update_user(user_id, **updates)
             if not updated:
                 _send_json(
                     self,
@@ -172,9 +182,8 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
                 )
                 return
 
-            manager = UserManager()
-            user = manager.get_user(user_id)
-            manager.close()
+            with UserManager() as manager:
+                user = manager.get_user(user_id)
             _send_json(
                 self,
                 200,
@@ -187,13 +196,13 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
             )
             return
 
-        timestamp = data.get("timestamp")
+        timestamp = datetime.now().strftime("%m/%d/%Y, %I:%M:%S %p")
         latitude, longitude = _parse_location(data)
-        if latitude is None or longitude is None or timestamp is None:
+        if latitude is None or longitude is None:
             _send_json(
                 self,
                 400,
-                {"status": "error", "message": "Missing location or timestamp"},
+                {"status": "error", "message": "Missing location"},
             )
             return
 
@@ -221,9 +230,8 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
             )
             return
 
-        manager = UserManager()
-        user = manager.get_user(user_id)
-        manager.close()
+        with UserManager() as manager:
+            user = manager.get_user(user_id)
         _send_json(
             self,
             200,

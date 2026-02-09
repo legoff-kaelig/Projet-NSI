@@ -1,7 +1,7 @@
 import sqlite3
 
 # Database path
-DB_PATH = "source\\backend\\DATABASES\\users.sqlite"
+DB_PATH = "sources\\backend\\DATABASES\\users.sqlite"
 
 class UserManager:
     def __init__(self):
