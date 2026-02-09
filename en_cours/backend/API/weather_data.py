@@ -178,50 +178,13 @@ def _get_last_update_time(user_id, db_path=DB_PATH):
     if not row:
         return None
 
-    return _parse_sqlite_timestamp(row[0])
-
-
-def _parse_sqlite_timestamp(value):
-    if not value or len(value) != 19:
-        return None
-
-    if value[4] != "-" or value[7] != "-" or value[10] != " " or value[13] != ":" or value[16] != ":":
-        return None
-
-    parts = [
-        value[0:4],
-        value[5:7],
-        value[8:10],
-        value[11:13],
-        value[14:16],
-        value[17:19],
-    ]
-    if not all(part.isdigit() for part in parts):
-        return None
-
-    year, month, day, hour, minute, second = [int(part) for part in parts]
-    if not (1 <= month <= 12):
-        return None
-    if not (0 <= hour <= 23 and 0 <= minute <= 59 and 0 <= second <= 59):
-        return None
-
-    if month == 2:
-        leap_year = (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
-        max_day = 29 if leap_year else 28
-    elif month in {4, 6, 9, 11}:
-        max_day = 30
-    else:
-        max_day = 31
-
-    if not (1 <= day <= max_day):
-        return None
-
-    return datetime(year, month, day, hour, minute, second)
+    return row[0]
 
 
 def _get_refresh_rate_minutes(user_id):
-    with UserManager() as manager:
-        user = manager.get_user(user_id)
+    manager = UserManager()
+    user = manager.get_user(user_id)
+    manager.close()
     if not user:
         return None
     return user[8]
@@ -236,27 +199,17 @@ def _check_refresh_rate(user_id):
     if not last_update:
         return True, None
 
-    now = datetime.utcnow()
-    elapsed = now - last_update
-    if elapsed >= timedelta(minutes=refresh_rate):
+    now = datetime.now()
+    elapsed_time = now - last_update
+    if elapsed_time >= timedelta(minutes=refresh_rate):
         return True, None
 
-    remaining = timedelta(minutes=refresh_rate) - elapsed
-    remaining_seconds = int(remaining.total_seconds())
-    return False, f"Refresh not ready, wait {remaining_seconds}s"
-
-
-def _parse_request_timestamp(timestamp_str):
-    if not timestamp_str:
-        return None
-    try:
-        return datetime.strptime(timestamp_str, "%m/%d/%Y, %I:%M:%S %p")
-    except ValueError:
-        return None
+    remaining = timedelta(minutes=refresh_rate) - elapsed_time
+    return False, f"Refresh not ready, wait {remaining}"
 
 
 def _parse_timeline_time(timeline_time):
-    # API returns ISO-8601 with Z suffix (UTC); make it naive for comparison
+    # API returns ISO-8601 with Z suffix (UTC). Make it naive for comparison
     parsed = datetime.fromisoformat(timeline_time.replace("Z", "+00:00"))
     if parsed.tzinfo is not None:
         return parsed.replace(tzinfo=None)
@@ -264,6 +217,7 @@ def _parse_timeline_time(timeline_time):
 
 
 def _parse_aqi_time(time_str):
+    # API returns ISO-8601 with Z suffix (UTC). Make it naive for comparison
     parsed = datetime.fromisoformat(time_str)
     if parsed.tzinfo is not None:
         return parsed.replace(tzinfo=None)
@@ -309,12 +263,9 @@ def _extract_aqi(aqi_data, request_time):
     return time_list[index], aqi_list[index]
 
 
-def save_weather_data(connection, cursor, data, timestamp, user_id, aqi_time, european_aqi):
+def save_weather_data(connection, cursor, data, request_time, timestamp, user_id, aqi_time, european_aqi):
     """Save current (request time) weather data to SQLite database"""
     hourly_timelines = data['timelines']['hourly']
-    request_time = _parse_request_timestamp(timestamp)
-    if request_time is None:
-        return False
     timeline = _select_current_timeline(hourly_timelines, request_time)
 
     # Get the time and values for this forecast
@@ -360,7 +311,7 @@ def save_weather_data(connection, cursor, data, timestamp, user_id, aqi_time, eu
 
 
 def update_weather_for_user(user_id, latitude, longitude, timestamp):
-    if latitude is None or longitude is None or timestamp is None:
+    if latitude is None or longitude is None:
         return False, "Missing location data"
 
     allowed, reason = _check_refresh_rate(user_id)
@@ -368,12 +319,12 @@ def update_weather_for_user(user_id, latitude, longitude, timestamp):
         return False, reason
 
     city = _resolve_city(latitude, longitude)
-    with UserManager() as manager:
-        manager.update_user_city(user_id, city)
+    manager = UserManager()
+    manager.update_user_city(user_id, city)
+    manager.close()
 
-    request_time = _parse_request_timestamp(timestamp)
-    if request_time is None:
-        return False, "Invalid timestamp format"
+    request_time = datetime.now()
+    timestamp = request_time.isoformat(sep=" ", timespec="seconds")
     location = f'{latitude},{longitude}'
     params = _build_params(location)
 
@@ -397,6 +348,7 @@ def update_weather_for_user(user_id, latitude, longitude, timestamp):
         connection,
         cursor,
         weather_data,
+        request_time,
         timestamp,
         user_id,
         aqi_time,
@@ -405,7 +357,7 @@ def update_weather_for_user(user_id, latitude, longitude, timestamp):
     connection.close()
 
     if not saved:
-        return False, "Invalid timestamp format"
+        return False, "Save failed"
 
     return True, {
         "db_path": DB_PATH,
