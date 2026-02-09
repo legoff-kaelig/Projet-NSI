@@ -16,10 +16,7 @@ def _read_json_body(handler):
     body_text = raw_body.decode("utf-8", errors="replace")
     if not body_text:
         return {}
-    try:
-        return json.loads(body_text)
-    except json.JSONDecodeError:
-        return None
+    return json.loads(body_text)
 
 
 def _send_json(handler, status_code, payload):
@@ -40,12 +37,9 @@ def _parse_location(data):
 
     location = data.get("location")
     if location and (latitude is None or longitude is None):
-        try:
-            lat_text, lon_text = location.split(",", 1)
-            latitude = float(lat_text.strip())
-            longitude = float(lon_text.strip())
-        except ValueError:
-            return None, None
+        lat_text, lon_text = location.split(",", 1)
+        latitude = float(lat_text.strip())
+        longitude = float(lon_text.strip())
 
     return latitude, longitude
 
@@ -95,8 +89,9 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
             username = data.get("username")
             email = data.get("email")
             password_hash = data.get("password_hash")
-            with UserManager() as manager:
-                new_user_id = manager.create_user(username, email, password_hash)
+            manager = UserManager()
+            new_user_id = manager.create_user(username, email, password_hash)
+            manager.close()
             if not new_user_id:
                 _send_json(
                     self,
@@ -105,8 +100,9 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
                 )
                 return
 
-            with UserManager() as manager:
-                user = manager.get_user(new_user_id)
+            manager = UserManager()
+            user = manager.get_user(new_user_id)
+            manager.close()
             _send_json(
                 self,
                 201,
@@ -121,8 +117,9 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
 
         user_id = data.get("user_id")
         password_hash = data.get("password_hash")
-        with UserManager() as manager:
-            user = manager.get_user(user_id)
+        manager = UserManager()
+        user = manager.get_user(user_id)
+        manager.close()
         if not user:
             _send_json(
                 self,
@@ -164,8 +161,9 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
                 )
                 return
 
-            with UserManager() as manager:
-                updated = manager.update_user(user_id, **updates)
+            manager = UserManager()
+            updated = manager.update_user(user_id, **updates)
+            manager.close()
             if not updated:
                 _send_json(
                     self,
@@ -174,8 +172,9 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
                 )
                 return
 
-            with UserManager() as manager:
-                user = manager.get_user(user_id)
+            manager = UserManager()
+            user = manager.get_user(user_id)
+            manager.close()
             _send_json(
                 self,
                 200,
@@ -222,8 +221,9 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
             )
             return
 
-        with UserManager() as manager:
-            user = manager.get_user(user_id)
+        manager = UserManager()
+        user = manager.get_user(user_id)
+        manager.close()
         _send_json(
             self,
             200,
