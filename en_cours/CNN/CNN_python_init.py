@@ -48,7 +48,7 @@ def init_CNN(imagePath, baseDeDoneePath = None, coefficients = None) :
 
     for px in imagePxParPxMaisEnGris :
 
-        structureNeuronale[0].append(sigmoid(px))
+        structureNeuronale[0].append(px / 255)
 
     ##############################################################################################################
 

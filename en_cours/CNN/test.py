@@ -3,7 +3,7 @@ from CNN_python_init import *
 
 os.chdir("en_cours/CNN")
 
-IMAGEPATH = os.path.join(os.getcwd(),"champis images/1.jpg")
+IMAGEPATH = os.path.join(os.getcwd(),"champis images/0.jpg")
 BASEDEDONNEEPATH = "CNN_base_de_donee.sqli"
 
 def resultat_CNN(reseauDeNeurones : ReseauDeNeurones) :

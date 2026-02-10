@@ -10,8 +10,8 @@ structureNeuronale = [[[],[],[],[],[],[],[],[],[],[],[],[],[]],
                        [[],[]]]
 nbCouches = len(structureNeuronale)
 
-largeurImage = 400
-hauteurImage = 600
+largeurImage = 50
+hauteurImage = 75
 
 con = sqlite3.connect("CNN_base_de_donee.sqli")
 cur=con.cursor()
@@ -54,7 +54,7 @@ for couche in range(nbCouches) :
 
     for neurone in range(len(structureNeuronale[couche])) :
 
-        biaisRandom = uniform(-15, 15)
+        biaisRandom = 0
 
         request = f"""
         INSERT INTO COUCHES{couche}
@@ -83,7 +83,7 @@ for couche in range(nbCouches) :
 
         for coefficient in range(nbCoefficients) :
 
-            coefRandom = uniform(-5, 5)
+            coefRandom = 0
 
             request = f"""
             INSERT INTO COUCHE{couche}NEURONE{neurone}

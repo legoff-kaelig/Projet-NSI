@@ -296,20 +296,20 @@ def training(nbTours, explore = False) :
                     print("Trouvé !")
                     print(cost_moyen_a_tester)
 
-                    # for learningRate in range(1, 10) : 
+                    for learningRate in range(1, 10) : 
 
-                    #     indiceReseauAAmeliorer = len(listeDeReseauxDeNeurones) - 1
-                    #     structureNeuronaleTemporaire = init_CNN(imagePath, None, listeDeReseauxDeNeurones[indiceReseauAAmeliorer].coefficients())
-                    #     structureNeuronaleTemporaire.changer_coefs(descente_de_gradient(5 / learningRate, structureNeuronaleTemporaire.coefficients()))
-                    #     listeDeReseauxDeNeurones.append(structureNeuronaleTemporaire)
+                        indiceReseauAAmeliorer = len(listeDeReseauxDeNeurones) - 1
+                        structureNeuronaleTemporaire = init_CNN(imagePath, None, listeDeReseauxDeNeurones[indiceReseauAAmeliorer].coefficients())
+                        structureNeuronaleTemporaire.changer_coefs(descente_de_gradient(5 / learningRate, structureNeuronaleTemporaire.coefficients()))
+                        listeDeReseauxDeNeurones.append(structureNeuronaleTemporaire)
 
-                    #     cost_moyen_a_tester = calcul_cost_moyen(structureNeuronaleTemporaire.coefficients())
-                    #     print(cost_moyen_a_tester)
-                    #     if cost_moyen_a_tester <= cost_moyen_min :
+                        cost_moyen_a_tester = calcul_cost_moyen(structureNeuronaleTemporaire.coefficients())
+                        print(cost_moyen_a_tester)
+                        if cost_moyen_a_tester <= cost_moyen_min :
 
-                    #         indiceMin = len(listeDeReseauxDeNeurones) - 1
-                    #         cost_moyen_min = cost_moyen_a_tester
-                    #         print("Trouvé !!!")
+                            indiceMin = len(listeDeReseauxDeNeurones) - 1
+                            cost_moyen_min = cost_moyen_a_tester
+                            print("Trouvé !!!")
 
         else :
 
@@ -342,5 +342,5 @@ def training(nbTours, explore = False) :
 
         nbTours -= 1
 
-training(10000000, True)
+training(10000000, False)
 print(calcul_cost_moyen())
