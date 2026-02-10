@@ -12,3 +12,6 @@
 2. Lancer le script `run_champy.py` dans le dossier `sources/backend/Champy`.
 3. Téléverser une image de test de champignon se situant dans le dossier `sources/backend/Champy/Images_tests` dans l'emplacement prévu à cet effet sur la page `scan.html`. Celle-ci est accessible directement depuis la page `home.html` depuis la barre de navigation.
 4. Appuyer sur valider pour recevoir le nom de ce champignon.
+---
+### Suivi des tâches
+[Cliquer-ici pour accéder à la feuille de suivi des tâches](https://docs.google.com/spreadsheets/d/1xPUP9ya7HwvEknu5ojBkGyNHl8VxsbrCi78x2pxM2xc/edit?usp=sharing)
