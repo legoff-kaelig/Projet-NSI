@@ -1,42 +1,38 @@
 .scan-content {
   display: flex;
   flex-direction: column;
-  gap: 1.2em;
   text-align: center;
 }
 
 .scan-content h2 {
+  padding: 0.5em 1.5em;
   font-size: 1.1rem;
   font-weight: 600;
 }
 
-#drop-zone {
-  padding: 1em;
-  cursor: pointer;
-}
-
-#file-input {
-  margin-top: 2em;
+.file-button {
+  margin-top: 1em;
+  display: inline-block;
   padding: 0.9em 1.8em;
-  border-radius: 999px;
-  border: dashed 1px;
-  font-weight: 600;
-  font-size: 0.9rem;
+  border-radius: 28px;
+  border: dashed 2px;
   cursor: pointer;
-}
-
-#drop-zone p {
   font-size: 0.9rem;
-  opacity: 0.9;
-  margin-bottom: 2em;
+  -webkit-backdrop-filter: blur(1px);
+  backdrop-filter: blur(1px);
 }
 
-#drop-zone.drag-over {
-  outline: 2px dashed rgba(255, 255, 255, 0.7);
-  background-color: rgba(255, 255, 255, 0.05);
+.file-button:hover {
+  background: rgba(235, 235, 235, 0.365);
+  transform: scale(1.03);
+}
+
+.file-button input {
+  display: none;
 }
 
 #preview-container {
+  margin-top: 1em;
   display: flex;
   flex-direction: column;
   gap: 1em;
@@ -44,19 +40,23 @@
 }
 
 #preview-image {
-  width: 100%;
+  max-width: 100%;
   max-height: 220px;
-  object-fit: cover;
-  border-radius: 16px;
+  border-radius: 20px;
+  object-fit: contain;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
 }
 
 #validate-btn {
-  padding: 0.6em 1.6em;
-  border-radius: 999px;
+  margin: 1em;
+  padding: 0.7em 1.6em;
+  border-radius: 24px;
   border: solid 1px;
-  font-weight: 600;
-  font-size: 0.9rem;
   cursor: pointer;
+  background: rgba(255, 255, 255, 0.262);
+  font-size: 0.9rem;
+  -webkit-backdrop-filter: blur(1px);
+  backdrop-filter: blur(1px);
 }
 
 .hidden {
