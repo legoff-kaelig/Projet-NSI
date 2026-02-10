@@ -342,5 +342,5 @@ def training(nbTours, explore = False) :
 
         nbTours -= 1
 
-training(10000000, False)
+training(10000000, True)
 print(calcul_cost_moyen())
