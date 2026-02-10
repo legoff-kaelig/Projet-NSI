@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="scan.css">
+    <script src="scan.js"></script>
+    <title>Trophées NSI - Projet V1</title>
+</head>
+<body>
+    <!-- Barre de navigation entre cette page-ci et deux nouvelles qui seront crées par la suite -->
+    <div class="bottom-nav-wrapper">
+      <nav class="liquid-glass bottom-nav">
+        <a href="home.html" class="nav-item">
+          <img src="assets/img/home.svg" alt="Home">
+        </a>
+
+        <a href="scan.html" class="nav-item active">
+          <img src="assets/img/scan.svg" alt="Scan">
+        </a>
+
+        <a href="#" class="nav-item disabled">
+          <img src="assets/img/settings.svg" alt="Settings">
+        </a>
+      </nav>
+    </div>
+
+    <p>Bienvenue,</p>
+    <span>Jules</span>
+   
+    <section class="liquid-glass content scan-content">
+      <div id="drop-zone">
+        <h2>Scannez un champignon et découvrez s'il est comestible ou non</h2>
+        <button id="file-input">Parcourir les fichiers</button>
+        <p>ou glissez l'image directement ici.</p>
+
+        <div id="preview-container" class="hidden">
+          <img id="preview-image" alt="">
+          <button id="validate-btn">Valider</button>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Importé depuis un site web générateur de widget "liquid glass" -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <defs>
+            <filter id="glass-distortion" x="0%" y="0%" width="100%" height="100%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.008 0.008" numOctaves="2" seed="92" result="noise" />
+            <feGaussianBlur in="noise" stdDeviation="2" result="blurred" />
+            <feDisplacementMap in="SourceGraphic" in2="blurred" scale="77" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
+</body>
+</html>
