@@ -1,33 +1,36 @@
+import sqlite3
 from neurones import *
 from CNN_python_init import *
 
 os.chdir("en_cours/CNN")
 
-IMAGEPATH = os.path.join(os.getcwd(),"champis images/0.jpg")
-BASEDEDONNEEPATH = "CNN_base_de_donee.sqli"
+con = sqlite3.connect("champys_correspondance_base_de_donee.sqli")
+cur = con.cursor()
 
-def resultat_CNN(reseauDeNeurones : ReseauDeNeurones) :
-    """
-    Entrées :
-        - <reseauDeNeurones> : Un réseau de neurones
+request = """
+CREATE TABLE IF NOT EXISTS CHAMPY (
+id INTEGER PRIMARY KEY,
+nom VARCHAR
+);
+"""
 
-    Sortie :
-        - <resultatMax> : La sortie prépondérante dans la liste des sorties du réseau de neurone
-    """
-    results = reseauDeNeurones.sortie()
+cur.execute(request)
 
-    resultatMax = 0
+request = """
+INSERT INTO CHAMPY
+(nom)
+VALUES ("Cèpe")
+"""
 
-    for indexResult in range(len(results)) :
+cur.execute(request)
 
-        if results[indexResult] > results[resultatMax] :
+request = """
+INSERT INTO CHAMPY
+(nom)
+VALUES ("Morille")
+"""
 
-            resultatMax = indexResult
+cur.execute(request)
 
-    return resultatMax
-
-reseau = init_CNN(IMAGEPATH, BASEDEDONNEEPATH)
-
-
-print(reseau.sortie())
-print(resultat_CNN(reseau))
+con.commit()
+con.close()

@@ -9,9 +9,18 @@ PORT = 8000
 
 
 def _read_json_body(handler):
+    """Read and decode a JSON request body from an HTTP handler.
+
+    Args:
+        handler (BaseHTTPRequestHandler): Active request handler.
+
+    Returns:
+        dict: Parsed JSON payload, or an empty dict if the body is empty.
+    """
     content_length = handler.headers.get("Content-Length", "0")
     length = int(content_length) if content_length.isdigit() else 0
 
+    # Read "raw bytes" once to avoid partial reads
     raw_body = handler.rfile.read(length)
     body_text = raw_body.decode("utf-8", errors="replace")
     if not body_text:
@@ -20,6 +29,13 @@ def _read_json_body(handler):
 
 
 def _send_json(handler, status_code, payload):
+    """Send a JSON response with standard CORS headers.
+
+    Args:
+        handler (BaseHTTPRequestHandler): Active request handler.
+        status_code (int): HTTP status code.
+        payload (dict): Response payload to convert to JSON.
+    """
     body = json.dumps(payload).encode("utf-8")
     handler.send_response(status_code)
     handler.send_header("Access-Control-Allow-Origin", "*")
@@ -32,9 +48,18 @@ def _send_json(handler, status_code, payload):
 
 
 def _parse_location(data):
+    """Extract latitude and longitude from request data.
+
+    Args:
+        data (dict): Request payload.
+
+    Returns:
+        tuple[float | None, float | None]: Latitude and longitude if present.
+    """
     latitude = data.get("latitude")
     longitude = data.get("longitude")
 
+    # Accept a "lat,lon" string as a fallback.
     location = data.get("location")
     if location and (latitude is None or longitude is None):
         lat_text, lon_text = location.split(",", 1)
@@ -45,6 +70,14 @@ def _parse_location(data):
 
 
 def _user_payload(user):
+    """Build the JSON response payload for user.
+
+    Args:
+        user (tuple): User row as returned by UserManager.
+
+    Returns:
+        dict: Normalized user payload.
+    """
     return {
         "user_id": user[0],
         "username": user[1],
@@ -60,6 +93,7 @@ def _user_payload(user):
 
 class AuthRequestHandler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
+        """Handle CORS preflight requests."""
         self.send_response(204)
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
@@ -67,6 +101,8 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_POST(self):
+        """Handle POST requests for the /auth endpoint."""
+        # Single endpoint router.
         if self.path != "/auth":
             _send_json(self, 404, {"status": "error", "message": "Not found"})
             return
@@ -76,6 +112,7 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
             _send_json(self, 400, {"status": "error", "message": "Invalid JSON"})
             return
 
+        # Validate supported actions
         action = data.get("action")
         if action not in {"create_user", "update_settings", "update_weather"}:
             _send_json(
@@ -85,6 +122,7 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
             )
             return
 
+        # --- Create user flow ---
         if action == "create_user":
             username = data.get("username")
             email = data.get("email")
@@ -115,6 +153,7 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
             )
             return
 
+        # --- Authenticated request ---
         user_id = data.get("user_id")
         password_hash = data.get("password_hash")
         manager = UserManager()
@@ -137,6 +176,7 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
             )
             return
 
+        # --- Update settings request ---
         if action == "update_settings":
             updates = {
                 "username": data.get("username"),
@@ -187,6 +227,7 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
             )
             return
 
+        # --- Update weather request---
         timestamp = data.get("timestamp")
         latitude, longitude = _parse_location(data)
         if latitude is None or longitude is None or timestamp is None:
@@ -236,7 +277,8 @@ class AuthRequestHandler(BaseHTTPRequestHandler):
             },
         )
 
-def run():
+def run():    
+    # Start the HTTP server with the auth handler.
     server = HTTPServer((HOST, PORT), AuthRequestHandler)
     print(f"Auth server listening on http://{HOST}:{PORT}")
     server.serve_forever()

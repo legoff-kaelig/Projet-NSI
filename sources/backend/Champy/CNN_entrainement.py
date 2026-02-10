@@ -4,7 +4,7 @@ from random import *
 from CNN_python_init import *
 from neurones import *
 
-os.chdir("en_cours/CNN")
+os.chdir("sources/backend/Champy")
 
 IMAGEDEBUTPATH = os.path.join(os.getcwd(),"champis images/")
 EXTENSIONIMAGE = ".jpg"
