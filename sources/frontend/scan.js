@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Gérer la sélection de fichier
   input.addEventListener("change", () => {
     const file = input.files[0];
+    const nameImage = file.name;
     if (!file) return;
     
     // Vérifier que le fichier est une image
@@ -21,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
       previewImage.src = reader.result;
       previewContainer.classList.remove("hidden");
     };
-    
+
     reader.readAsDataURL(file);
   });
 });
