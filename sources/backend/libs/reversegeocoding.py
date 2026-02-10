@@ -2,9 +2,15 @@ import os
 import sqlite3
 
 class ReverseGeocoding:
-    """Reverse-geocoding a latitude/longitude pair using a SQLite DB."""
-
     def __init__(self, lat: str, lon: str, db_path: str = "villes_france.sqlite", table_name: str = "villes_france_free"):
+        """Initialize a reverse geocoding helper backed by a SQLite table
+
+        Args:
+            lat (str): Latitude as a string (decimal degrees)
+            lon (str): Longitude as a string (decimal degrees)
+            db_path (str, optional): Path to the SQLite DB file. Defaults to "villes_france.sqlite"
+            table_name (str, optional): Table containing city data. Defaults to "villes_france_free"
+        """
         # Normalize inputs to avoid whitespace mismatches in SQL LIKE queries
         self.lat = lat.strip()
         self.lon = lon.strip()
@@ -19,7 +25,15 @@ class ReverseGeocoding:
         self.cur = self.con.cursor()
 
     def _query_best(self, lat_prefix: str, lon_prefix: str) -> str | None:
-        """Returns the name of the closest matching city based on latitude and longitude prefixes, or None if no match is found"""
+        """Return the closest matching city for given latitude/longitude prefixes
+
+        Args:
+            lat_prefix (str): Latitude prefix used with SQL LIKE
+            lon_prefix (str): Longitude prefix used with SQL LIKE
+
+        Returns:
+            str | None: City name if a match exists, otherwise None
+        """
         request = f"""
             SELECT ville_nom
             FROM (
@@ -38,7 +52,11 @@ class ReverseGeocoding:
         return row[0] if row else None
 
     def find_city(self) -> str | None:
-        """Return the first matching city name, or None if nothing is found."""
+        """Find a city name by trimming the coordinate prefixes
+
+        Returns:
+            str | None: City name if found, otherwise None
+        """
         # Gradually shorten prefixes until a match is found
         max_trim = min(len(self.lat), len(self.lon))
         for step in range(0, max_trim):
@@ -56,8 +74,7 @@ class ReverseGeocoding:
         return None
     
     def close_connection(self):
-        """Close the database connection."""
-        # Cleanup for caller convenience
+        """Close the database connection and release the cursor"""
         if self.con is not None:
             self.con.close()
             self.con = None

@@ -42,6 +42,14 @@ aqi_url = 'https://air-quality-api.open-meteo.com/v1/air-quality'
 
 
 def _build_params(location):
+    """Build query parameters for the weather forecast API
+
+    Args:
+        location (str): Comma-separated latitude and longitude
+
+    Returns:
+        dict: Query parameters for the weather API request
+    """
     return {
         'location': location,
         'apikey': API_KEY,
@@ -51,6 +59,15 @@ def _build_params(location):
 
 
 def _build_aqi_params(latitude, longitude):
+    """Build query parameters for the air quality API
+
+    Args:
+        latitude (str | float): Latitude of the location
+        longitude (str | float): Longitude of the location
+
+    Returns:
+        dict: Query parameters for the AQI API request
+    """
     return {
         'latitude': latitude,
         'longitude': longitude,
@@ -60,6 +77,15 @@ def _build_aqi_params(latitude, longitude):
 
 
 def _resolve_city(latitude, longitude):
+    """Found a city name from latitude and longitude
+
+    Args:
+        latitude (str | float): Latitude of the location
+        longitude (str | float): Longitude of the location
+
+    Returns:
+        str | None: City name if resolved; otherwise None
+    """
     if latitude is None or longitude is None:
         return None
 
@@ -69,6 +95,16 @@ def _resolve_city(latitude, longitude):
     return city
 
 def weather_get(url, params, fields_filter):
+    """Fetch and filter weather data from the forecast API
+
+    Args:
+        url (str): Forecast API endpoint
+        params (dict): Query parameters for the request
+        fields_filter (list[str]): Weather fields to keep per hour
+
+    Returns:
+        dict | None: Filtered API payload or None on error
+    """
     # Get API response
     response = requests.get(url, params)
 
@@ -98,6 +134,15 @@ def weather_get(url, params, fields_filter):
 
 
 def aqi_get(url, params):
+    """Fetch air quality data from the AQI API
+
+    Args:
+        url (str): AQI API endpoint
+        params (dict): Query parameters for the request
+
+    Returns:
+        dict | None: API payload or None on error
+    """
     response = requests.get(url, params)
 
     if response.status_code != 200:
@@ -108,7 +153,14 @@ def aqi_get(url, params):
 
 
 def create_weather_database(db_path=DB_PATH):
-    """Create SQLite database and table for weather data"""
+    """Create SQLite DB and table for weather data
+
+    Args:
+        db_path (str): Path to the SQLite database
+
+    Returns:
+        tuple[sqlite3.Connection, sqlite3.Cursor]: Open connection and cursor
+    """
     # Connects the DB and sets a cursor
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
@@ -145,6 +197,15 @@ def create_weather_database(db_path=DB_PATH):
 
 
 def _get_last_update_time(user_id, db_path=DB_PATH):
+    """Get the most recent weather update timestamp for a user
+
+    Args:
+        user_id (int): User identifier
+        db_path (str): Path to the SQLite database
+
+    Returns:
+        str | None: Timestamp string if present; otherwise None
+    """
     # Connects the DB and sets a cursor
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
@@ -182,6 +243,14 @@ def _get_last_update_time(user_id, db_path=DB_PATH):
 
 
 def _get_refresh_rate_minutes(user_id):
+    """Retrieve the weather refresh rate for a user
+
+    Args:
+        user_id (int): User identifier
+
+    Returns:
+        int | None: Refresh rate in minutes or None if user missing
+    """
     manager = UserManager()
     user = manager.get_user(user_id)
     manager.close()
@@ -191,6 +260,14 @@ def _get_refresh_rate_minutes(user_id):
 
 
 def _check_refresh_rate(user_id):
+    """Check whether the user is eligible for a weather refresh
+
+    Args:
+        user_id (int): User identifier
+
+    Returns:
+        tuple[bool, str | None]: (allowed, reason) pair
+    """
     refresh_rate = _get_refresh_rate_minutes(user_id)
     if refresh_rate is None:
         return False, "User not found"
@@ -209,6 +286,14 @@ def _check_refresh_rate(user_id):
 
 
 def _parse_timeline_time(timeline_time):
+    """Parse a timeline ISO-8601 string into a naive datetime.
+
+    Args:
+        timeline_time (str): ISO-8601 time string with optional Z suffix.
+
+    Returns:
+        datetime: Naive datetime for comparison.
+    """
     # API returns ISO-8601 with Z suffix (UTC). Make it naive for comparison
     parsed = datetime.fromisoformat(timeline_time.replace("Z", "+00:00"))
     if parsed.tzinfo is not None:
@@ -217,6 +302,14 @@ def _parse_timeline_time(timeline_time):
 
 
 def _parse_aqi_time(time_str):
+    """Parse an AQI ISO-8601 string into a naive datetime.
+
+    Args:
+        time_str (str): ISO-8601 time string.
+
+    Returns:
+        datetime: Naive datetime for comparison.
+    """
     # API returns ISO-8601 with Z suffix (UTC). Make it naive for comparison
     parsed = datetime.fromisoformat(time_str)
     if parsed.tzinfo is not None:
@@ -225,6 +318,15 @@ def _parse_aqi_time(time_str):
 
 
 def _select_current_timeline(hourly_timelines, request_time):
+    """Select the closest hourly timeline entry to the request time.
+
+    Args:
+        hourly_timelines (list[dict]): Hourly timeline entries.
+        request_time (datetime): Timestamp to match.
+
+    Returns:
+        dict | None: Closest timeline entry.
+    """
     # Choose the closest hourly record to the request time
     closest = None
     smallest_diff = None
@@ -237,6 +339,15 @@ def _select_current_timeline(hourly_timelines, request_time):
 
 
 def _select_closest_aqi(time_list, request_time):
+    """Select the closest AQI time index to the request time.
+
+    Args:
+        time_list (list[str]): List of ISO-8601 time strings.
+        request_time (datetime): Timestamp to match.
+
+    Returns:
+        int: Index of the closest time.
+    """
     closest_index = 0
     smallest_diff = abs(_parse_aqi_time(time_list[0]) - request_time)
     index = 1
@@ -250,6 +361,15 @@ def _select_closest_aqi(time_list, request_time):
 
 
 def _extract_aqi(aqi_data, request_time):
+    """Extract the closest AQI value and time.
+
+    Args:
+        aqi_data (dict): AQI API payload.
+        request_time (datetime): Timestamp to match.
+
+    Returns:
+        tuple[str, float] | None: (time, european_aqi) or None.
+    """
     hourly = aqi_data.get('hourly')
     if not hourly:
         return None
@@ -264,7 +384,21 @@ def _extract_aqi(aqi_data, request_time):
 
 
 def save_weather_data(connection, cursor, data, request_time, timestamp, user_id, aqi_time, european_aqi):
-    """Save current (request time) weather data to SQLite database"""
+    """Save current (request time) weather data to SQLite database.
+
+    Args:
+        connection (sqlite3.Connection): Active DB connection.
+        cursor (sqlite3.Cursor): DB cursor.
+        data (dict): Weather API payload.
+        request_time (datetime): Request timestamp for selection.
+        timestamp (str): Timestamp string for storage.
+        user_id (int): User identifier.
+        aqi_time (str): AQI time string.
+        european_aqi (float): AQI value.
+
+    Returns:
+        bool: True if saved successfully.
+    """
     hourly_timelines = data['timelines']['hourly']
     timeline = _select_current_timeline(hourly_timelines, request_time)
 
@@ -311,6 +445,17 @@ def save_weather_data(connection, cursor, data, request_time, timestamp, user_id
 
 
 def update_weather_for_user(user_id, latitude, longitude, timestamp):
+    """Fetch and persist weather and AQI data for a user.
+
+    Args:
+        user_id (int): User identifier.
+        latitude (str | float): Latitude of the request.
+        longitude (str | float): Longitude of the request.
+        timestamp (str): Timestamp string from caller (overridden).
+
+    Returns:
+        tuple[bool, str | dict]: (success, error) or (success, payload).
+    """
     if latitude is None or longitude is None:
         return False, "Missing location data"
 
