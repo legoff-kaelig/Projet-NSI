@@ -6,8 +6,6 @@ import requests
 import sqlite3
 from datetime import datetime, timedelta
 
-DEV_MODE = True
-
 api_dir = os.path.dirname(__file__)
 backend_dir = os.path.abspath(os.path.join(api_dir, ".."))
 if api_dir not in sys.path:
@@ -19,9 +17,9 @@ from API_KEY import API_KEY
 from libs.reversegeocoding import ReverseGeocoding
 from user_manager import UserManager
 
-DB_PATH = "sources\\backend\\DATABASES\\weather.sqlite"
+DB_PATH = "source\\backend\\DATABASES\\weather.sqlite"
 
-fields_filter = [               # INDICATION FRONT END
+fields_filter = [               #                       INDICATION FRONT END
     'weatherCode',              # Pour les icônes météo (Image avec les nuages/soleil/... en haut à gauche)
     'temperature',              # Température réelle ({IN FIRST BLOCK})
     'temperatureApparent',      # Ressenti (Feels like)
@@ -74,6 +72,7 @@ def weather_get(url, params, fields_filter):
     # Get API response
     response = requests.get(url, params)
 
+    # Check is the response is successful
     if response.status_code != 200:
         print(f'Error: {response.status_code} - {response.content}')
         return None
@@ -84,7 +83,7 @@ def weather_get(url, params, fields_filter):
     hourly_timelines = data['timelines']['hourly']
     
     for timeline in hourly_timelines:
-        # Get all the weather values for an hour
+        # Get all the weather values for an hour, !! because the backend currently doesn't support weekly forcasts !!
         all_values = timeline['values']
         
         # Create a dictionary with the fields in the list fields_filter
@@ -110,11 +109,11 @@ def aqi_get(url, params):
 
 def create_weather_database(db_path=DB_PATH):
     """Create SQLite database and table for weather data"""
-    # Connect to database (creates it if it doesn't exist)
+    # Connects the DB and sets a cursor
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
     
-    # Create table for weather forecasts
+    # Create table for weather forecasts if it doesn't exist
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS weather_forecast (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -146,11 +145,11 @@ def create_weather_database(db_path=DB_PATH):
 
 
 def _get_last_update_time(user_id, db_path=DB_PATH):
-    if not os.path.exists(db_path):
-        return None
-
+    # Connects the DB and sets a cursor
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
+
+    # Check if the weather_forecast table exists in the DB
     cursor.execute(
         """
             SELECT name
@@ -179,91 +178,38 @@ def _get_last_update_time(user_id, db_path=DB_PATH):
     if not row:
         return None
 
-    return _parse_sqlite_timestamp(row[0])
-
-
-def _parse_sqlite_timestamp(value):
-    if not value or len(value) != 19:
-        return None
-
-    if value[4] != "-" or value[7] != "-" or value[10] != " " or value[13] != ":" or value[16] != ":":
-        return None
-
-    parts = [
-        value[0:4],
-        value[5:7],
-        value[8:10],
-        value[11:13],
-        value[14:16],
-        value[17:19],
-    ]
-    if not all(part.isdigit() for part in parts):
-        return None
-
-    year, month, day, hour, minute, second = [int(part) for part in parts]
-    if not (1 <= month <= 12):
-        return None
-    if not (0 <= hour <= 23 and 0 <= minute <= 59 and 0 <= second <= 59):
-        return None
-
-    if month == 2:
-        leap_year = (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
-        max_day = 29 if leap_year else 28
-    elif month in {4, 6, 9, 11}:
-        max_day = 30
-    else:
-        max_day = 31
-
-    if not (1 <= day <= max_day):
-        return None
-
-    return datetime(year, month, day, hour, minute, second)
+    return row[0]
 
 
 def _get_refresh_rate_minutes(user_id):
-    with UserManager() as manager:
-        user = manager.get_user(user_id)
+    manager = UserManager()
+    user = manager.get_user(user_id)
+    manager.close()
     if not user:
         return None
     return user[8]
 
 
 def _check_refresh_rate(user_id):
-    if DEV_MODE:
-        return True, None
-
     refresh_rate = _get_refresh_rate_minutes(user_id)
     if refresh_rate is None:
         return False, "User not found"
 
     last_update = _get_last_update_time(user_id)
-    if last_update is None:
+    if not last_update:
         return True, None
 
-    now = datetime.utcnow()
-    elapsed = now - last_update
-
-    if elapsed.total_seconds() < 0:
+    now = datetime.now()
+    elapsed_time = now - last_update
+    if elapsed_time >= timedelta(minutes=refresh_rate):
         return True, None
 
-    if elapsed >= timedelta(minutes=refresh_rate):
-        return True, None
-
-    remaining_seconds = int((timedelta(minutes=refresh_rate) - elapsed).total_seconds())
-    return False, f"Refresh not ready, wait {remaining_seconds}s"
-
-
-def _parse_request_timestamp(timestamp_str):
-    if not timestamp_str:
-        return None
-    try:
-        return datetime.strptime(timestamp_str, "%m/%d/%Y, %I:%M:%S %p")
-    except ValueError:
-        return None
+    remaining = timedelta(minutes=refresh_rate) - elapsed_time
+    return False, f"Refresh not ready, wait {remaining}"
 
 
 def _parse_timeline_time(timeline_time):
-    # API returns ISO-8601 with Z suffix (UTC); make it naive for comparison
+    # API returns ISO-8601 with Z suffix (UTC). Make it naive for comparison
     parsed = datetime.fromisoformat(timeline_time.replace("Z", "+00:00"))
     if parsed.tzinfo is not None:
         return parsed.replace(tzinfo=None)
@@ -271,6 +217,7 @@ def _parse_timeline_time(timeline_time):
 
 
 def _parse_aqi_time(time_str):
+    # API returns ISO-8601 with Z suffix (UTC). Make it naive for comparison
     parsed = datetime.fromisoformat(time_str)
     if parsed.tzinfo is not None:
         return parsed.replace(tzinfo=None)
@@ -316,12 +263,9 @@ def _extract_aqi(aqi_data, request_time):
     return time_list[index], aqi_list[index]
 
 
-def save_weather_data(connection, cursor, data, timestamp, user_id, aqi_time, european_aqi):
+def save_weather_data(connection, cursor, data, request_time, timestamp, user_id, aqi_time, european_aqi):
     """Save current (request time) weather data to SQLite database"""
     hourly_timelines = data['timelines']['hourly']
-    request_time = _parse_request_timestamp(timestamp)
-    if request_time is None:
-        return False
     timeline = _select_current_timeline(hourly_timelines, request_time)
 
     # Get the time and values for this forecast
@@ -351,43 +295,36 @@ def save_weather_data(connection, cursor, data, timestamp, user_id, aqi_time, eu
         european_aqi
     ]
 
-    try:
-        # Insert into database
-        cursor.execute("""
-            INSERT INTO weather_forecast 
-            (user_id, timestamp, weather_time, weatherCode, temperature, 
-            temperatureApparent, precipitationProbability, humidity, uvIndex, windSpeed, 
-            windGust, windDirection, visibility, pressureSeaLevel, rainIntensity, 
-            snowIntensity, cloudCover, aqi_time, european_aqi)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, row_data)
-        connection.commit()
-        print('Saved current weather record to database')
-        return True
-    except Exception as e:
-        print("DB ERROR:", e)
-        return False
+    # Insert into database
+    cursor.execute("""
+        INSERT INTO weather_forecast 
+        (user_id, timestamp, weather_time, weatherCode, temperature, 
+         temperatureApparent, precipitationProbability, humidity, uvIndex, windSpeed, 
+         windGust, windDirection, visibility, pressureSeaLevel, rainIntensity, 
+         snowIntensity, cloudCover, aqi_time, european_aqi)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, row_data)
+
+    connection.commit()
+    print('Saved current weather record to database')
+    return True
 
 
 def update_weather_for_user(user_id, latitude, longitude, timestamp):
-    if latitude is None or longitude is None or timestamp is None:
+    if latitude is None or longitude is None:
         return False, "Missing location data"
 
     allowed, reason = _check_refresh_rate(user_id)
     if not allowed:
-        return False, {
-            "status": "error",
-            "message": "Weather update failed",
-            "details": reason
-        }
+        return False, reason
 
     city = _resolve_city(latitude, longitude)
-    with UserManager() as manager:
-        manager.update_user_city(user_id, city)
+    manager = UserManager()
+    manager.update_user_city(user_id, city)
+    manager.close()
 
-    request_time = _parse_request_timestamp(timestamp)
-    if request_time is None:
-        return False, "Invalid timestamp format"
+    request_time = datetime.now()
+    timestamp = request_time.isoformat(sep=" ", timespec="seconds")
     location = f'{latitude},{longitude}'
     params = _build_params(location)
 
@@ -411,6 +348,7 @@ def update_weather_for_user(user_id, latitude, longitude, timestamp):
         connection,
         cursor,
         weather_data,
+        request_time,
         timestamp,
         user_id,
         aqi_time,
@@ -419,22 +357,15 @@ def update_weather_for_user(user_id, latitude, longitude, timestamp):
     connection.close()
 
     if not saved:
-        return False, "Invalid timestamp format"
-
-    hourly = weather_data['timelines']['hourly']
-    timeline = _select_current_timeline(hourly, request_time)
-    values = timeline['values']
+        return False, "Save failed"
 
     return True, {
-        "city": city,
+        "db_path": DB_PATH,
+        "user_id": user_id,
         "timestamp": timestamp,
-        "temperature": values.get("temperature"),
-        "feels_like": values.get("temperatureApparent"),
-        "humidity": values.get("humidity"),
-        "precipitation": values.get("precipitationProbability"),
-        "wind_speed": values.get("windSpeed"),
-        "weather_code": values.get("weatherCode"),
-        "european_aqi": european_aqi
+        "aqi_time": aqi_time,
+        "european_aqi": european_aqi,
+        "city": city,
     }
 
 
