@@ -9,3 +9,6 @@
 ---
 ### Reconnaissance d'images :
 1. Installer le module `pillow` en tapant `py -m pip install pillow` dans la console. 
+2. Lancer le script `run_champy.py` dans le dossier `sources/backend/Champy`.
+3. Téléverser une image de champignons de test se situant dans le dossier `sources/backend/Champy/Images_tests` dans l'emplacement prévu à cet effet sur la page `scan.html` accessible directement depuis la page `home.html` ouverte précedemment en cliquant sur le petit bouton en bas de la page avec un oeil.
+4. Appuyer sur valider pour recevoir le nom de ce champignon 
