@@ -30,15 +30,13 @@
     <span>Jules</span>
    
     <section class="liquid-glass content scan-content">
-      <div id="drop-zone">
-        <h2>Scannez un champignon et découvrez s'il est comestible ou non</h2>
-        <button id="file-input">Parcourir les fichiers</button>
-        <p>ou glissez l'image directement ici.</p>
+      <h2>Scannez un champignon et découvrez s'il est comestible ou non</h2>
+      <label class="file-button">Parcourir les fichiers<input type="file" id="file-input" accept="image/*"></label>
+      <p>ou glissez l'image directement ici.</p>
 
-        <div id="preview-container" class="hidden">
-          <img id="preview-image" alt="">
-          <button id="validate-btn">Valider</button>
-        </div>
+      <div id="preview-container" class="hidden">
+        <img id="preview-image" alt="">
+        <button id="validate-btn">Valider</button>
       </div>
     </section>
     
