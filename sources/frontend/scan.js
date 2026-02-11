@@ -29,8 +29,9 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch(`http://127.0.0.1/update?plant_id=${nameImage}`)
       .then(response => response.json())
       .then(data => {
-        const datasStringify = data
+        const datasStringify = data;
         console.log(datasStringify);
+        validateBtn.innerHTML = datasStringify.name;
       });
   });
 });
