@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Gérer la sélection de fichier
   input.addEventListener("change", () => {
     const file = input.files[0];
+    const nameImage = file.name;
     if (!file) return;
     
     // Vérifier que le fichier est une image
@@ -24,5 +25,12 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     reader.readAsDataURL(file);
+
+    fetch(`http://127.0.0.1/update?plant_id=${nameImage}`)
+      .then(response => response.json())
+      .then(data => {
+        const datasStringify = data
+        console.log(datasStringify);
+      });
   });
 });

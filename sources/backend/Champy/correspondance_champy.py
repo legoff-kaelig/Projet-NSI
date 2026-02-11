@@ -5,16 +5,15 @@ import json
 from CNN_python_init import *
 from neurones import *
 
-os.chdir("sources/backend/Champy")
+if os.getcwd()[-3] != "m":
+
+    os.chdir("sources/backend/Champy")
 
 BASEDEDONNEECNNPATH = "CNN_base_de_donee.sqli"
 BASEDEDONNEECORRESPONDANCEPATH = "champys_correspondance_base_de_donee.sqli"
-IMAGEPATH = os.path.join(os.getcwd(),"images_tests/2.jpg")
+IMAGEPATH = os.path.join(os.getcwd(),"images_tests")
 
-
-
-
-def resultat_CNN(imagePath) :
+def resultat_CNN(nameImg) :
     """
     Entrées :
         - <imagePath> : Le chemin vers l'image à passer dans le réseau de neurones
@@ -22,6 +21,7 @@ def resultat_CNN(imagePath) :
     Sortie :
         - <resultatMax> : La sortie prépondérante dans la liste des sorties du réseau de neurones
     """
+    imagePath = os.path.join(IMAGEPATH, nameImg)
     reseauDeNeurones = init_CNN(imagePath, BASEDEDONNEECNNPATH)
 
     results = reseauDeNeurones.sortie()
@@ -65,7 +65,7 @@ def champy(imagePath = IMAGEPATH):
 
 
 
-print(champy(IMAGEPATH))
+# print(champy("3.jpg"))
 
 #### Partie prenant en charge la liaison entre le site et l'IA, pas achevée ####
 # run = True
@@ -91,3 +91,7 @@ print(champy(IMAGEPATH))
 #     if data["exit"] :
 
 #         run = False
+
+
+
+
