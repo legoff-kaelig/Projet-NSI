@@ -58,27 +58,33 @@ def correspondance_avec_base_de_donnees(resultat) :
     return cur.fetchall()
 
 
+def champy(imagePath):
 
-run = True
+    return correspondance_avec_base_de_donnees(resultat_CNN(imagePath))
 
-while run :
 
-    time.sleep(3)
 
-    with open("data.json", "r") as f :
+#### Partie prenant en charge la liaison entre le site et l'IA, pas achevée ####
+# run = True
 
-        data = json.load(f)
+# while run :
 
-    if data["run"] :
+#     time.sleep(3)
 
-        resultat = resultat_CNN(os.path.join(os.getcwd(), data["imagePath"]))
-        nomDuChampi = correspondance_avec_base_de_donnees(resultat)
-        champiDico = {"nom" : nomDuChampi}
+#     with open("data.json", "r") as f :
 
-        with open("data2.json", "w") as f :
+#         data = json.load(f)
 
-            json.dump(champiDico, f)
+#     if data["run"] :
 
-    if data["exit"] :
+#         resultat = resultat_CNN(os.path.join(os.getcwd(), data["imagePath"]))
+#         nomDuChampi = correspondance_avec_base_de_donnees(resultat)
+#         champiDico = {"nom" : nomDuChampi}
 
-        run = False
+#         with open("data2.json", "w") as f :
+
+#             json.dump(champiDico, f)
+
+#     if data["exit"] :
+
+#         run = False
