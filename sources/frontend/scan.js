@@ -2,11 +2,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("file-input");
   const previewContainer = document.getElementById("preview-container");
   const previewImage = document.getElementById("preview-image");
+  const validateBtn = document.getElementById("validate-btn");
 
   // Gérer la sélection de fichier
   input.addEventListener("change", () => {
     const file = input.files[0];
-    const nameImage = file.name;
     if (!file) return;
     
     // Vérifier que le fichier est une image
@@ -24,6 +24,5 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     reader.readAsDataURL(file);
-
   });
 });
