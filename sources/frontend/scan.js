@@ -25,20 +25,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
     reader.readAsDataURL(file);
 
-    const fs = require('fs');
-
-    fetch('data.json')
-      .then(response => response.json())
-      .then(data => console.log(data))
-
-    var donnees = JSON.parse(data);
-
-    donnees.nom = nameImage;
-    donnees.run = true;
-
-    const jsonString = JSON.stringify(donnees, null, 2);
-
-    fs.writeFileSync('donnees.json', jsonString, 'utf8');
-
   });
 });
