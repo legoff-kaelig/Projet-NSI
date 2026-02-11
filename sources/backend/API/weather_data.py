@@ -5,6 +5,7 @@ import sys
 import requests
 import sqlite3
 from datetime import datetime, timedelta
+DEV_MODE = True # Laisser à True pour le moment, ne fonctionne pas à False pour l'instant
 
 api_dir = os.path.dirname(__file__)
 backend_dir = os.path.abspath(os.path.join(api_dir, ".."))
@@ -17,7 +18,7 @@ from API_KEY import API_KEY
 from libs.reversegeocoding import ReverseGeocoding
 from user_manager import UserManager
 
-DB_PATH = "source\\backend\\DATABASES\\weather.sqlite"
+DB_PATH = "sources\\backend\\DATABASES\\weather.sqlite"
 
 fields_filter = [               #                       INDICATION FRONT END
     'weatherCode',              # Pour les icônes météo (Image avec les nuages/soleil/... en haut à gauche)
@@ -268,6 +269,8 @@ def _check_refresh_rate(user_id):
     Returns:
         tuple[bool, str | None]: (allowed, reason) pair
     """
+    if DEV_MODE:
+        return True, None
     refresh_rate = _get_refresh_rate_minutes(user_id)
     if refresh_rate is None:
         return False, "User not found"
@@ -275,14 +278,27 @@ def _check_refresh_rate(user_id):
     last_update = _get_last_update_time(user_id)
     if not last_update:
         return True, None
+        
+    now = datetime.utcnow()
+    elapsed = now - last_update
 
-    now = datetime.now()
-    elapsed_time = now - last_update
-    if elapsed_time >= timedelta(minutes=refresh_rate):
+    if elapsed.total_seconds() < 0:
         return True, None
 
-    remaining = timedelta(minutes=refresh_rate) - elapsed_time
-    return False, f"Refresh not ready, wait {remaining}"
+    if elapsed >= timedelta(minutes=refresh_rate):
+        return True, None
+
+    remaining_seconds = int((timedelta(minutes=refresh_rate) - elapsed).total_seconds())
+    return False, f"Refresh not ready, wait {remaining_seconds}s"
+
+
+def _parse_request_timestamp(timestamp_str):
+    if not timestamp_str:
+        return None
+    try:
+        return datetime.strptime(timestamp_str, "%m/%d/%Y, %I:%M:%S %p")
+    except ValueError:
+        return None
 
 
 def _parse_timeline_time(timeline_time):
@@ -383,7 +399,7 @@ def _extract_aqi(aqi_data, request_time):
     return time_list[index], aqi_list[index]
 
 
-def save_weather_data(connection, cursor, data, request_time, timestamp, user_id, aqi_time, european_aqi):
+def save_weather_data(connection, cursor, data, timestamp, user_id, aqi_time, european_aqi):
     """Save current (request time) weather data to SQLite database.
 
     Args:
@@ -400,6 +416,9 @@ def save_weather_data(connection, cursor, data, request_time, timestamp, user_id
         bool: True if saved successfully.
     """
     hourly_timelines = data['timelines']['hourly']
+    request_time = _parse_request_timestamp(timestamp)
+    if request_time is None:
+        return False
     timeline = _select_current_timeline(hourly_timelines, request_time)
 
     # Get the time and values for this forecast
@@ -430,18 +449,21 @@ def save_weather_data(connection, cursor, data, request_time, timestamp, user_id
     ]
 
     # Insert into database
-    cursor.execute("""
-        INSERT INTO weather_forecast 
-        (user_id, timestamp, weather_time, weatherCode, temperature, 
-         temperatureApparent, precipitationProbability, humidity, uvIndex, windSpeed, 
-         windGust, windDirection, visibility, pressureSeaLevel, rainIntensity, 
-         snowIntensity, cloudCover, aqi_time, european_aqi)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, row_data)
-
-    connection.commit()
-    print('Saved current weather record to database')
-    return True
+    try:
+        cursor.execute("""
+            INSERT INTO weather_forecast 
+            (user_id, timestamp, weather_time, weatherCode, temperature, 
+            temperatureApparent, precipitationProbability, humidity, uvIndex, windSpeed, 
+            windGust, windDirection, visibility, pressureSeaLevel, rainIntensity, 
+            snowIntensity, cloudCover, aqi_time, european_aqi)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, row_data)
+        connection.commit()
+        print('Saved current weather record to database')
+        return True
+    except Exception as e:
+        print("DB ERROR:", e)
+        return False
 
 
 def update_weather_for_user(user_id, latitude, longitude, timestamp):
@@ -464,12 +486,12 @@ def update_weather_for_user(user_id, latitude, longitude, timestamp):
         return False, reason
 
     city = _resolve_city(latitude, longitude)
-    manager = UserManager()
-    manager.update_user_city(user_id, city)
-    manager.close()
+    with UserManager() as manager:
+        manager.update_user_city(user_id, city)
 
-    request_time = datetime.now()
-    timestamp = request_time.isoformat(sep=" ", timespec="seconds")
+    request_time = _parse_request_timestamp(timestamp)
+    if request_time is None:
+        return False, "Invalid timestamp format"
     location = f'{latitude},{longitude}'
     params = _build_params(location)
 
@@ -493,7 +515,6 @@ def update_weather_for_user(user_id, latitude, longitude, timestamp):
         connection,
         cursor,
         weather_data,
-        request_time,
         timestamp,
         user_id,
         aqi_time,
@@ -502,15 +523,25 @@ def update_weather_for_user(user_id, latitude, longitude, timestamp):
     connection.close()
 
     if not saved:
-        return False, "Save failed"
+        return False, "Invalid timestamp format"
+
+    hourly = weather_data['timelines']['hourly']
+    timeline = _select_current_timeline(hourly, request_time)
+    values = timeline['values']
 
     return True, {
         "db_path": DB_PATH,
         "user_id": user_id,
-        "timestamp": timestamp,
-        "aqi_time": aqi_time,
-        "european_aqi": european_aqi,
         "city": city,
+        "timestamp": timestamp,
+        "temperature": values.get("temperature"),
+        "feels_like": values.get("temperatureApparent"),
+        "humidity": values.get("humidity"),
+        "precipitation": values.get("precipitationProbability"),
+        "wind_speed": values.get("windSpeed"),
+        "weather_code": values.get("weatherCode"),
+        "european_aqi": european_aqi,
+        "aqi_time": aqi_time
     }
 
 
