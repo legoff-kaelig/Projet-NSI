@@ -1,3 +1,4 @@
+#### Librairie permettant de gérer un Réseau de Neurones et des Neurones ####
 from random import *
 from PIL.Image import *
 import math

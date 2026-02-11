@@ -9,10 +9,9 @@ os.chdir("sources/backend/Champy")
 
 BASEDEDONNEECNNPATH = "CNN_base_de_donee.sqli"
 BASEDEDONNEECORRESPONDANCEPATH = "champys_correspondance_base_de_donee.sqli"
-IMAGEPATH = os.path.join(os.getcwd(),"champis images/0.jpg")
+IMAGEPATH = os.path.join(os.getcwd(),"images_tests/2.jpg")
 
-con = sqlite3.connect("champys_correspondance_base_de_donee.sqli")
-cur = con.cursor()
+
 
 
 def resultat_CNN(imagePath) :
@@ -46,11 +45,13 @@ def correspondance_avec_base_de_donnees(resultat) :
     Sortie :
         - Le nom du champignon stocké dans la base de donnée <BASEDEDONNEECORRESPONDANCEPATH>
     """
+    con = sqlite3.connect("champys_correspondance_base_de_donee.sqli")
+    cur = con.cursor()
 
     request = f"""
     SELECT nom
     FROM CHAMPY
-    WHERE id = {resultat - 1}
+    WHERE id = {resultat + 1}
     """
 
     cur.execute(request)
@@ -58,11 +59,13 @@ def correspondance_avec_base_de_donnees(resultat) :
     return cur.fetchall()
 
 
-def champy(imagePath):
+def champy(imagePath = IMAGEPATH):
 
-    return correspondance_avec_base_de_donnees(resultat_CNN(imagePath))
+    return correspondance_avec_base_de_donnees(resultat_CNN(imagePath))[0][0]
 
 
+
+print(champy(IMAGEPATH))
 
 #### Partie prenant en charge la liaison entre le site et l'IA, pas achevée ####
 # run = True

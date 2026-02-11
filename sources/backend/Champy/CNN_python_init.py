@@ -1,3 +1,4 @@
+#### Permet la création d'un réseau de neurone ####
 from neurones import *
 from random import *
 from PIL.Image import *
