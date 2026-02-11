@@ -64,7 +64,6 @@ def champy(imagePath = IMAGEPATH):
     return correspondance_avec_base_de_donnees(resultat_CNN(imagePath))[0][0]
 
 
-
 # print(champy("3.jpg"))
 
 #### Partie prenant en charge la liaison entre le site et l'IA, pas achevée ####

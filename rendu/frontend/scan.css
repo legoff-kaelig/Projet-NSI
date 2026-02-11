@@ -1,0 +1,58 @@
+.scan-content {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.scan-content h2 {
+  padding: 0.5em 1.5em;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.file-button {
+  margin-top: 1em;
+  display: inline-block;
+  padding: 0.9em 1.8em;
+  border-radius: 28px;
+  border: dashed 2px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  -webkit-backdrop-filter: blur(1px);
+  backdrop-filter: blur(1px);
+}
+
+.file-button:hover {
+  background: rgba(235, 235, 235, 0.365);
+  transform: scale(1.03);
+}
+
+.file-button input {
+  display: none;
+}
+
+#preview-container {
+  margin-top: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  align-items: center;
+}
+
+#preview-image {
+  max-width: 100%;
+  max-height: 220px;
+  border-radius: 20px;
+  object-fit: contain;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+#champi {
+  margin: 0 0 1em 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.hidden {
+  display: none;
+}

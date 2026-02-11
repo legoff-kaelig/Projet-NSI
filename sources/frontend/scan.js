@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("file-input");
   const previewContainer = document.getElementById("preview-container");
   const previewImage = document.getElementById("preview-image");
-  const validateBtn = document.getElementById("validate-btn");
+  const nomChampi = document.getElementById("nom-champi");
 
   // Gérer la sélection de fichier
   input.addEventListener("change", () => {
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .then(data => {
         const datasStringify = data;
         console.log(datasStringify);
-        validateBtn.innerHTML = datasStringify.name;
+        nomChampi.innerHTML = datasStringify.name;
       });
   });
 });

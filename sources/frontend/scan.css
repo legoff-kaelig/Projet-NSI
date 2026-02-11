@@ -47,16 +47,10 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
 }
 
-#validate-btn {
-  margin: 1em;
-  padding: 0.7em 1.6em;
-  border-radius: 24px;
-  border: solid 1px;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.262);
-  font-size: 0.9rem;
-  -webkit-backdrop-filter: blur(1px);
-  backdrop-filter: blur(1px);
+#champi {
+  margin: 0 0 1em 0;
+  font-size: 1.2rem;
+  font-weight: 500;
 }
 
 .hidden {
